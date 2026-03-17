@@ -1,2 +1,2 @@
 # CS108-project
-we have selected 2nd problem statement for this project. 
+A Mini Game Hub containing connect4,othello(reversi),tic-tac-toe
