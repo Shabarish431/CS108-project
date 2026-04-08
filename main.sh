@@ -1,12 +1,13 @@
 users=("" "") 
 i=0
 
+echo "2 users are required to play any game"
 # if anywhere user didn't met the conditions required to login or regester again this loop runs from the beginning
 # iterates the loop till 2 users are logged in to play the game
 # 'i' stores the value of number of users logged in
 
 while ((i<2)); do 
-    echo "Press 1 to register or 2 to login or other valid keys to terminate"
+    echo "Enter 1 to register or 2 to login or other valid keys to terminate"
     read -e option
     totallines=$(awk 'END{print NR}' users.tsv) # total no of lines in the users.tsv to iterate over each and every line
     
@@ -71,7 +72,7 @@ while ((i<2)); do
                         # if user decided to play then the user count increases and the username is stored in the 'users' array
                         users[i]=${un}
                         ((i++))
-                        echo "${un} logged in successfully"
+                        echo "Player ${i}: ${un} logged in successfully"
                     fi
                 else
                     echo "Password should be of atleast 7 charecters"
@@ -106,7 +107,7 @@ while ((i<2)); do
                     # if the password matches then increase the number of users and store the username in 'users' array
                     users[i]=${un}
                     ((i++))
-                    echo "${un} logged in successfully"
+                    echo "Player ${i}: ${un} logged in successfully"
                 else 
                     echo "Incorrect Password"
                 fi
