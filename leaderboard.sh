@@ -1,32 +1,32 @@
-metric="$1"
-declare -A winn
-declare -A lose
-declare -A draw
+metric="$1" #metric id
 declare -A games
-nu=0
-wb=1
-lb=1
-users=()
-while IFS ',' read -r status win los date game; do
-    for user in "${users[@]}"; do
-        if [[ $user == $win ]]; then 
-            wb=0
-        fi
-        if [[ $user == $los ]]; then
-            lb=0
-        fi
-    done
-    if ((wb==1)); then
-        users[$nu]="$win"
-        ((nu++))
+declare -A gn #game_name
+declare -A users
+gn["othello"]=1
+gn["tictactoe"]=2
+gn["connect4"]=3
+n=0
+dr=0
+d=0
+ratio=0
+he(){
+    if [[ "$1" == "" ]]; then
+        echo "0"
+    else
+        echo "$1"
     fi
-    if ((lb==1)); then
-        users[$nu]="$los"
-        ((nu++))
+}
+while IFS=',' read -r status win los date game; do
+    game=$(echo "$game" | tr -d '\r')
+    if [[ ${users[${win}]} == '' ]]; then 
+        users[${win}]=1
+    fi
+    if [[ ${users[${los}]} == '' ]]; then 
+        users[${los}]=1
     fi
     if (($status == 1)); then
-        ((winn["$win"]++))
-        ((lose["$los"]++))
+        ((games["0,1,$win"]++))
+        ((games["0,2,$los"]++))
         if [[ ${game} == "othello" ]]; then
             ((games["1,1,${win}"]++))
             ((games["1,2,${los}"]++))
@@ -38,8 +38,8 @@ while IFS ',' read -r status win los date game; do
             ((games["2,2,${los}"]++))
         fi
     else
-        ((draw["$win"]++))
-        ((draw["$los"]++))
+        ((games["0,3,$win"]++))
+        ((games["0,3,$los"]++))
         if [[ ${game} == "othello" ]]; then
             ((games["1,3,${win}"]++))
             ((games["1,3,${los}"]++))
@@ -51,30 +51,44 @@ while IFS ',' read -r status win los date game; do
             ((games["2,3,${los}"]++))
         fi
     fi
-done
-if (($metric==1)); then # Sort by win
-    echo "GAMES:"
-    for gam in "othello connect4 tictactoe"; do
-        echo "For game ${gam}:"
-        if [[ ${gam} == "othello" ]];then
-            gid=1
-        elif [[ ${gam} == "tictactoe" ]];then
-            gid=2
-        elif [[ ${gam} == "connect4" ]];then
-            gid=3
-        fi
-        echo -E "Username\tWins\tLoses\tdraws\tWin/Lose"
-        for user in "$users[@]"; do
-            if ((games["gid,2,user"] != 0)); then
-                ratio=((games["gid,1,user"]/games["gid,2,user"]))
-            else
-                ratio="no losses"
-            fi
-            echo -E "${user}\t${games["${gid},1,${user}"]}\t${games["${gid},2,${user}"]}\t${games["${gid},3,${user}"]}\t${ratio}"
-        done
+done < history.csv
+
+((m=metric+1))
+pi(){ # print info
+    sort -k "${m}" -r ginfo > ginfo1
+    awk '{printf "%-25s %-8s %-8s %-8s %-8s\n", $1, $2, $3, $4, $5 }' ginfo1
+    rm ginfo ginfo1
+    echo ""
+}
+cv(){ # calculate values
+    local user="$1"
+    local gid="$2"
+    n=$(he "${games["${gid},1,${user}"]}")
+    d=$(he "${games["${gid},2,${user}"]}")
+    dr=$(he "${games["${gid},3,${user}"]}")
+    if ((d != 0)); then
+        ratio=$(echo "scale=2; $n / $d"| bc -l)
+    else
+        ratio="pro"
+    fi
+}
+for gam in "${!gn[@]}"; do
+    echo "For Game ${gam}:"
+    gid=${gn["${gam}"]}
+    for user in "${!users[@]}"; do
+        cv "${user}" "${gid}"
+        echo -e "${user}\t${n}\t${d}\t${dr}\t${ratio}">> ginfo
     done
-elif (($metric==2)); then # sort by lose
-    echo "GAMES:"
-elif (($metric==3)); then # sort by w/l ratio
-    echo "GAMES:"
-fi
+    printf "%-25s %-8s %-8s %-8s %-8s\n" "Username" "Wins" "Loses" "Draws" "Win/Lose"
+    pi
+done
+for user in "${!users[@]}"; do
+    echo "For User ${user}:"
+    for gam in "${!gn[@]}"; do
+        gid=${gn["${gam}"]}
+        cv "${user}" "${gid}"
+        echo -e "${gam}\t${n}\t${d}\t${dr}\t${ratio}">> ginfo
+    done
+    printf "%-25s %-8s %-8s %-8s %-8s\n" "Game" "Wins" "Loses" "Draws" "Win/Lose"
+    pi
+done
