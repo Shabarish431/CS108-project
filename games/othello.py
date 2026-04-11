@@ -9,7 +9,9 @@ board[3,3], board[3,4] = 'W', 'B' #o,x
 board[4,3], board[4,4] = 'B', 'W'
 player = 'B'
 winner_display = ''
+winner = ''
 loading = 0
+count = 0
 message_display = ''
 message_timer = 0
 empty=pygame.image.load("games/othelloempty.png")
@@ -92,85 +94,90 @@ def count_score(board):
     o = np.sum(board == 'W')
     return x, o
 def check_win(board,player):
-    global winner_display
+    global winner_display,winner
     next_player = 'W' if player == 'B' else 'B'
     if not has_valid_move(board,player) and not has_valid_move(board,next_player):
         x, o = count_score(board)
         if x == o :
             winner_display="It's Draw"
+            winner = "Draw"
             return True
         elif x>o :
             winner_display="player B is winner"
+            winner = "B"
             return True
         elif o>x :
             winner_display="player W is winner"
+            winner = "W"
             return True
     elif not has_valid_move(board, player) and has_valid_move(board,next_player):
         return "skip"
 while True:
-    #game board display
-    for i in range(0,600,75):
-        for j in range(0,600,75):
-            if board[i//75][j//75] == 'W':
-                screen.blit(white,(i,j))
-            elif board[i//75][j//75] == 'B':
-                screen.blit(black,(i,j))
-            else:
-                screen.blit(empty,(i,j))
-    result = check_win(board, player)
-    if result == True:
-        font = pygame.font.Font(None, 36)
-        text = font.render(winner_display, True, (255, 0, 0))
-        screen.blit(text, (200, 550))
-    elif result == "skip":
-        message_display = f"No valid moves for {player}, skipping turn."
-        message_timer = 60
-        player = 'W' if player == 'B' else 'B'
     for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x,y=pygame.mouse.get_pos()
-            if message_timer > 0 or result == True:
-                continue
-            if board[x//75][y//75] != ' ':
-                #display occupied cell
-                message_display = "Cell Occupied!"
-                message_timer = 60 
-            elif not is_valid_move(board, x//75, y//75, player):
-                #display invalid move
-                    message_display = "Invalid Move!"
-                    message_timer = 60
-            else:
-                apply_move(board, x//75, y//75, player)
-                player = 'W' if player == 'B' else 'B'
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
             pygame.quit()
-            sys.exit()
-    if message_display != "" and message_timer > 0:
-        font = pygame.font.Font(None, 36)
-        text = font.render(message_display, True, (255, 0, 0))
-        screen.blit(text, (200, 550))
-        message_timer -= 1
-        if message_timer == 0:
-            message_display = ""
+            sys.exit()  
     if loading <= 100:
         clock.tick(time)
-        if loading % 3 == 0:
-            screen.blit(loading_i,(0,0))
-            font = pygame.font.Font(None, 36)
+        screen.blit(loading_i,(0,0))
+        font = pygame.font.Font(None, 36)
+        if loading%3 == 0:
             text = font.render(f"Loading.   {loading}", True, (255, 255, 255))
-            screen.blit(text, (200, 550))
-            loading += 1
-        elif loading % 3 == 1:
-            screen.blit(loading_i,(0,0))
-            font = pygame.font.Font(None, 36)
+        if loading%3 == 1:
             text = font.render(f"Loading..  {loading}", True, (255, 255, 255))
-            screen.blit(text, (200, 550))
-            loading += 1
-        elif loading % 3 == 2:
-            screen.blit(loading_i,(0,0))
-            font = pygame.font.Font(None, 36)
+        if loading%3 == 2:
             text = font.render(f"Loading... {loading}", True, (255, 255, 255))
-            screen.blit(text, (200, 550))
-            loading += 1
+        screen.blit(text, (200, 550))
+        loading += 1
+    else:
+        #game board display
+        for i in range(0,600,75):
+            for j in range(0,600,75):
+                if board[i//75][j//75] == 'W':
+                    screen.blit(white,(i,j))
+                elif board[i//75][j//75] == 'B':
+                    screen.blit(black,(i,j))
+                else:
+                    screen.blit(empty,(i,j))
+        result = check_win(board, player)
+        if result == True:
+            if count == 0:
+                print(winner)
+                count += 1
+            font = pygame.font.Font(None, 36)
+            text = font.render(winner_display, True, (255, 0, 0))
+            text1 = font.render("press e to Exit", True, (255, 0, 0))
+            screen.blit(text, (190, 500))
+            screen.blit(text1,(200, 550))
+        elif result == "skip":
+            message_display = f"No valid moves for {player}, skipping turn."
+            message_timer = 60
+            player = 'W' if player == 'B' else 'B'
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x,y=pygame.mouse.get_pos()
+                if message_timer > 0 or result == True:
+                    continue
+                if board[x//75][y//75] != ' ':
+                    #display occupied cell
+                    message_display = "Cell Occupied!"
+                    message_timer = 60 
+                elif not is_valid_move(board, x//75, y//75, player):
+                    #display invalid move
+                        message_display = "Invalid Move!"
+                        message_timer = 60
+                else:
+                    apply_move(board, x//75, y//75, player)
+                    player = 'W' if player == 'B' else 'B'
+        if message_display != "" and message_timer > 0:
+            font = pygame.font.Font(None, 36)
+            text = font.render(message_display, True, (255, 0, 0))
+            if message_display == "Cell Occupied!" or message_display == "Invalid Move!":
+                screen.blit(text, (200, 550))
+            else:
+                screen.blit(text,(100, 550))
+            message_timer -= 1
+            if message_timer == 0:
+                message_display = ""
     clock.tick(60)
     pygame.display.update()
