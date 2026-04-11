@@ -4,18 +4,18 @@ import numpy as np
 pygame.init()
 screen=pygame.display.set_mode((600, 600))
 pygame.display.set_caption("TIC TAC TOE")
-empty=pygame.image.load("empty.png")
+empty=pygame.image.load("games/empty.png")
 empty=pygame.transform.scale(empty,(60,60))
-withx=pygame.image.load("withX.png")
+withx=pygame.image.load("games/withX.png")
 withx=pygame.transform.scale(withx,(60,60))
-withy=pygame.image.load("withO.png")
+withy=pygame.image.load("games/withO.png")
 withy=pygame.transform.scale(withy,(60,60))
 board=np.full((10,10),' ')
 player = 'X'
 winner = ''
 loading=0
 count = 0 
-loadingpic=pygame.image.load("tictactoev2.png")
+loadingpic=pygame.image.load("games/tictactoev2.png")
 clock = pygame.time.Clock()
 time = np.random.randint(10,20)
 while True:
@@ -111,12 +111,6 @@ while True:
             loading_text = f"Loading.   {loading}%"
             text = font.render(loading_text, True, (255, 255, 255))
             screen.blit(text, (200, 480))
-            press_e_text = "Press E to Exit"
-            text2 = font.render(press_e_text, True, (200, 200, 200))
-            screen.blit(text2, (100, 420))
-            press_r_text = "Press R to Restart"
-            text1 = font.render(press_r_text, True, (200, 200, 200))
-            screen.blit(text1, (50, 370))
         elif loading%3 == 1:
             screen.blit(loadingpic,(0,0))
             font = pygame.font.Font(None, 50)
