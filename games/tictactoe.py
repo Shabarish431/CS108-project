@@ -87,7 +87,6 @@ while True:
         for event in pygame.event.get():
             #if they press e to exit and the game is declared as draw
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
-                print("It's Draw")
                 pygame.quit()
                 sys.exit() 
     else:
@@ -100,15 +99,14 @@ while True:
                 else:screen.blit(empty,(i,j))
         for event in pygame.event.get():
             #pressing e to exit the game and declaring the result of the game
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_e:
-                    if winner == ' ':
-                        if player == 'X':
-                            winner = 'O'
-                            print(username2)
-                        elif player == 'O':
-                            winner = 'X'
-                            print(username1)
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
+                if winner == ' ':
+                    if player == 'X':
+                        winner = 'O'
+                        print(username2)
+                    elif player == 'O':
+                        winner = 'X'
+                        print(username1)
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -126,16 +124,6 @@ while True:
                 elif board[y//60][x//60] != ' ' and winner == ' ':
                     message_display = "Cell Occupied!"
                     message_timer = 30
-            if event.type==pygame.QUIT:
-                if winner == ' ':
-                    if player == 'X':
-                        winner = 'O'
-                        print(username2)
-                    elif player == 'O':
-                        winner = 'X'
-                        print(username1)
-                pygame.quit()
-                sys.exit()
         if winner!=' ' or count==100:
             if winner_count == 0 :
                 if winner == 'X':
@@ -144,6 +132,7 @@ while True:
                     print(username2)
                 elif count == 100:
                     print("It's Draw")
+                    winner = 'D'
                 winner_count += 1
             if winner == 'O' or winner == 'X':
                 cell=60

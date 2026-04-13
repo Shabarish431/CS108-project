@@ -81,7 +81,6 @@ while True:
         loading_time += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
-                print("It's Draw")
                 pygame.quit()
                 sys.exit()                
     else:
@@ -129,17 +128,7 @@ while True:
                         board_count += 1
                         break
             #to decalre the opponent as winner if teh current player exits before game is completed
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e:
-                    if player == 'Y' and winner == ' ':
-                        winner = 'R'
-                        print(username2)
-                    elif player == 'R' and winner == ' ':
-                        winner = 'Y'
-                        print(username1)
-                    pygame.quit()
-                    sys.exit()
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
                 if player == 'Y' and winner == ' ':
                     winner = 'R'
                     print(username2)
@@ -157,6 +146,7 @@ while True:
                     print(username2)
                 elif board_count == 49:
                     print("It's Draw")
+                    winner = 'D'
                 count += 1
                 #blurring and dimming the image
             small = pygame.transform.smoothscale(screen, (150, 150))
