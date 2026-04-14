@@ -1,18 +1,20 @@
 import pygame
 import sys
 import numpy as np
+import os
 pygame.init() #initializing the pygame
 screen=pygame.display.set_mode((800, 600)) #declaring the size of the screen
 #loading all the required images
 pygame.display.set_caption("TIC TAC TOE")
-empty = pygame.image.load("games/empty.png")
-empty = pygame.transform.scale(empty,(60,60))
-withx = pygame.image.load("games/withX.png")
-withx = pygame.transform.scale(withx,(60,60))
-withy = pygame.image.load("games/withO.png")
-withy = pygame.transform.scale(withy,(60,60))
-loadingpic = pygame.image.load("games/tictactoev2.png")
-loadingpic = pygame.transform.scale(loadingpic,(600,600))
+base_path = os.path.dirname(__file__)
+empty = pygame.image.load(os.path.join(base_path, "empty.png"))
+empty = pygame.transform.scale(empty, (60, 60))
+withx = pygame.image.load(os.path.join(base_path, "withX.png"))
+withx = pygame.transform.scale(withx, (60, 60))
+witho = pygame.image.load(os.path.join(base_path, "withO.png"))
+witho = pygame.transform.scale(witho, (60, 60))
+loadingpic = pygame.image.load(os.path.join(base_path, "tictactoev2.png"))
+loadingpic = pygame.transform.scale(loadingpic, (600, 600))
 board = np.full((10,10),' ') #declaring the gameboard
 #declaring the players
 username1 = sys.argv[1]
@@ -26,6 +28,20 @@ message_display = ' ' #used if the occupied cell is selected
 message_timer = 0 #used to display the iamge for a second tentatively
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
+def render_user(x, y, title, label, username, color):
+    font = pygame.font.Font(None, 36)
+
+    t1 = font.render(title, True, color)
+    t2 = font.render(label, True, color)
+
+    if len(username) > 13:
+        username = username[:11] + "..."
+
+    t3 = font.render(username, True, color)
+
+    screen.blit(t1, (x, y))
+    screen.blit(t2, (x, y + 27))
+    screen.blit(t3, (x, y + 54))
 def check_win(board,player):
     #splicing all horizontal 
     horizontal = (
@@ -77,12 +93,9 @@ while True:
         clock.tick(time)
         screen.blit(loadingpic,(0,0))
         font = pygame.font.Font(None, 50)
-        if loading%3 == 0:
-            loading_text = f"Loading.   {loading}%"
-        elif loading%3 == 1:
-            loading_text = f"Loading..  {loading}%"
-        else:
-            loading_text = f"Loading... {loading}%"
+        dots = "." * (loading % 3 + 1)
+        spaces = " " * (2 - loading % 3)
+        loading_text = f"Loading{dots}{spaces} {loading}%"
         text = font.render(loading_text, True, (255, 255, 255))
         screen.blit(text, (200, 480))
         loading += 1
@@ -96,9 +109,12 @@ while True:
         #displaying the game board
         for i in range(0,600,60):
             for j in range(0,600,60):
-                if board[j//60][i//60] == 'X':screen.blit(withx,(i,j))
-                elif board[j//60][i//60] == 'O':screen.blit(withy,(i,j))
-                else:screen.blit(empty,(i,j))
+                img_map = {
+                    ' ':empty,
+                    'X':withx,
+                    'O':witho
+                }
+                screen.blit(img_map[board[j//60][i//60]], (i, j))
         for event in pygame.event.get():
             #pressing e to exit the game and declaring the result of the game
             if event.type == pygame.KEYDOWN:
@@ -192,29 +208,7 @@ while True:
         screen.blit(press_e,(610,192))
     #displaying the usernames of the players
     font=pygame.font.Font(None,36)
-    user11 = "Username Of"
-    user12 = "Player X:"
-    user11 = font.render(user11,True,(255,255,255))
-    user12 = font.render(user12,True,(255,255,255))
-    if len(username1) > 13:
-        user13 = username1[:11]+"..."
-        user13 = font.render(user13,True,(255,255,255))
-    else:
-        user13 = font.render(username1,True,(255,255,255))
-    screen.blit(user11,(610,10))
-    screen.blit(user12,(610,37))
-    screen.blit(user13,(610,64))
-    user21 = "Username Of"
-    user22 = "Player O:"
-    user21 = font.render(user21,True,(255,255,255))
-    user22 = font.render(user22,True,(255,255,255))
-    if len(username2) > 13:
-        user23 = username2[:11]+"..."
-        user23 = font.render(user23,True,(255,255,255))
-    else:
-        user23 = font.render(username2,True,(255,255,255))
-    screen.blit(user21,(610,101))
-    screen.blit(user22,(610,128))
-    screen.blit(user23,(610,155))
+    render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
+    render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
     clock.tick(60)
     pygame.display.update()

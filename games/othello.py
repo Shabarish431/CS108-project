@@ -1,6 +1,7 @@
 import sys
 import pygame
 import numpy as np
+import os
 pygame.init()
 screen=pygame.display.set_mode((800, 600))#settign the screen size
 pygame.display.set_caption("OTHELLO")
@@ -17,17 +18,32 @@ count = 0 #used to print the winner usernaem in the terminal
 message_display = ' ' #used to decalre the message to be delivered if needed
 message_timer = 0 #used to set the timer of the messager
 #declared all the images needed
-empty = pygame.image.load("games/othelloempty.png")
-empty = pygame.transform.scale(empty,(75,75))
-white = pygame.image.load("games/othellowhite.png")
-white = pygame.transform.scale(white,(75,75))
-black = pygame.image.load("games/othelloblack.png")
-black = pygame.transform.scale(black,(75,75))
-loading_i = pygame.image.load("games/othelloloading.png")
-loading_i = pygame.transform.scale(loading_i,(600,600))
+base_path = os.path.dirname(__file__)
+empty = pygame.image.load(os.path.join(base_path, "othelloempty.png"))
+empty = pygame.transform.scale(empty, (75, 75))
+white = pygame.image.load(os.path.join(base_path, "othellowhite.png"))
+white = pygame.transform.scale(white, (75, 75))
+black = pygame.image.load(os.path.join(base_path, "othelloblack.png"))
+black = pygame.transform.scale(black, (75, 75))
+loading_i = pygame.image.load(os.path.join(base_path, "othelloloading.png"))
+loading_i = pygame.transform.scale(loading_i, (600, 600))
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
 #this function is used to declare whether teh opponent is on that direction
+def render_user(x, y, title, label, username, color):
+    font = pygame.font.Font(None, 36)
+
+    t1 = font.render(title, True, color)
+    t2 = font.render(label, True, color)
+
+    if len(username) > 13:
+        username = username[:11] + "..."
+
+    t3 = font.render(username, True, color)
+
+    screen.blit(t1, (x, y))
+    screen.blit(t2, (x, y + 27))
+    screen.blit(t3, (x, y + 54))
 def check_direction(board, r, c, dr, dc, player, found_opponent=False):
     r += dr
     c += dc
@@ -128,13 +144,11 @@ while True:
         clock.tick(time)
         screen.blit(loading_i,(0,0))
         font = pygame.font.Font(None, 36)
-        if loading%3 == 0:
-            text = font.render(f"Loading.   {loading}", True, (255, 255, 255))
-        if loading%3 == 1:
-            text = font.render(f"Loading..  {loading}", True, (255, 255, 255))
-        if loading%3 == 2:
-            text = font.render(f"Loading... {loading}", True, (255, 255, 255))
-        screen.blit(text, (200, 550))
+        dots = "." * (loading % 3 + 1)
+        spaces = " " * (2-loading % 3)
+        loading_text = f"Loading{dots}{spaces} {loading}%"
+        loading_text = font.render(loading_text,True,(255,255,255))
+        screen.blit(loading_text, (200, 550))
         loading += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
@@ -145,12 +159,12 @@ while True:
         #game board display
         for i in range(0,600,75):
             for j in range(0,600,75):
-                if board[i//75][j//75] == 'W':
-                    screen.blit(white,(i,j))
-                elif board[i//75][j//75] == 'B':
-                    screen.blit(black,(i,j))
-                else:
-                    screen.blit(empty,(i,j))
+                img_map = {
+                    ' ':empty,
+                    'W':white,
+                    'B':black
+                }
+                screen.blit(img_map[board[i//75][j//75]], (i, j))
         result = check_win(board, player)
         if result == True:
             if count == 0:
@@ -208,30 +222,8 @@ while True:
                 message_display = " "
     #displaying the usernames of the players
     font=pygame.font.Font(None,36)
-    user11 = "Username Of"
-    user12 = "Player B:"
-    user11 = font.render(user11,True,(255,255,255))
-    user12 = font.render(user12,True,(255,255,255))
-    if len(username1) > 13:
-        user13 = username1[:11]+"..."
-        user13 = font.render(user13,True,(255,255,255))
-    else:
-        user13 = font.render(username1,True,(255,255,255))
-    screen.blit(user11,(610,10))
-    screen.blit(user12,(610,37))
-    screen.blit(user13,(610,64))
-    user21 = "Username Of"
-    user22 = "Player W:"
-    user21 = font.render(user21,True,(255,255,255))
-    user22 = font.render(user22,True,(255,255,255))
-    if len(username2) > 13:
-        user23 = username2[:11]+"..."
-        user23 = font.render(user23,True,(255,255,255))
-    else:
-        user23 = font.render(username2,True,(255,255,255))
-    screen.blit(user21,(610,101))
-    screen.blit(user22,(610,128))
-    screen.blit(user23,(610,155))
+    render_user(610, 10, "Username Of", "Player Y:", username1, (255,255,255))
+    render_user(610, 101, "Username Of", "Player R:", username2, (255,255,255))
     #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
     if winner == ' ':
         press_e = "press E to exit"
