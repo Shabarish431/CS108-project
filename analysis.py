@@ -43,6 +43,8 @@ def visualise():
     bar = plt.subplot(1,2,2)
     bar.set_title("Top Players")
     bar.bar(player_names,win_count)
+    bar.set_xlabel("UserName")
+    bar.set_ylabel("WinCount")
 
     plt.tight_layout()
     plt.show()

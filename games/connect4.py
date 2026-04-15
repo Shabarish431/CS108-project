@@ -20,7 +20,8 @@ red = pygame.transform.scale(pygame.image.load(os.path.join(base_path, "conred.p
 loading = pygame.transform.smoothscale(pygame.image.load(os.path.join(base_path, "connect4_loading.jpg")), (700, 700))
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
-def render_user(x, y, title, label, username, color):
+def render_user(x, y, title, label, username, color,w=900,h=700):
+    #screen = pygame.display.set_mode((w,h))
     font = pygame.font.Font(None, 36)
 
     t1 = font.render(title, True, color)
@@ -88,7 +89,7 @@ while True:
         screen.blit(loading,(0,0))
         font = pygame.font.Font(None, 50)
         dots = "." * (loading_time % 3 + 1)
-        spaces = " " * (2 - loading % 3)
+        spaces = " " * (2 - loading_time % 3)
         loading_text = f"Loading{dots}{spaces} {loading_time}%"
         text = font.render(loading_text, True, (0, 0, 0))
         screen.blit(text, (330, 530))
