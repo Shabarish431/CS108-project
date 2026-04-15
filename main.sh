@@ -27,6 +27,10 @@ while ((i<2)); do
             iter=0
             b=0
             echo "Username should not contain spaces"
+        elif echo "${un}" | grep -Eq ","; then
+            iter=0
+            b=0
+            echo "Username should not contain commas"
         elif [[ ${#un} -lt 4 ]]; then
             iter=0
             b=0
