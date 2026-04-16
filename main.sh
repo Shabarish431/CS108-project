@@ -35,6 +35,10 @@ while ((i<2)); do
             iter=0
             b=0
             echo "Username should contain atleast 4 charecters"
+        elif ((${#un} > 13)); then
+            iter=0
+            b=0
+            echo "Username shall be of atmost 13 charecters"
         fi
         if (( iter==1 ));then 
             l=1
@@ -63,7 +67,7 @@ while ((i<2)); do
                     echo "Password should contain atleast 1 number"
                 elif ! echo ${pw} | grep -Eq "^[A-Za-z0-9]*@[A-Za-z0-9]*$"; then
                     echo "Password should contain exactly 1 @" 
-                elif (( ${#pw} >= 7)); then
+                elif (( ${#pw} >= 7 && ${#pw} < 15)); then
                 # if all the password conditions are met the entered password is hashed and stored in the 'pass' variable
                     pass=$(echo ${pw} | sha256sum | awk '{print $1}')
                     # username and password entered is stored in the users.tsv
@@ -79,7 +83,7 @@ while ((i<2)); do
                         echo "Player ${i}: ${un} logged in successfully"
                     fi
                 else
-                    echo "Password should be of atleast 7 charecters"
+                    echo "Password should be of atleast 7 and atmost 14 charecters"
                 fi
             fi
 
