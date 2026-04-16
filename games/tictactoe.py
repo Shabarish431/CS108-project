@@ -6,10 +6,10 @@ import os
 base_path = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
 
-pygame.init() #initializing the pygame
-screen=pygame.display.set_mode((800, 600)) #declaring the size of the screen
-#loading all the required images
-pygame.display.set_caption("TIC TAC TOE")
+# pygame.init() #initializing the pygame
+# screen=pygame.display.set_mode((800, 600)) #declaring the size of the screen
+# #loading all the required images
+# pygame.display.set_caption("TIC TAC TOE")
 empty = pygame.image.load(os.path.join(base_path, "empty.png"))
 print(os.path.join(base_path, "empty.png"))
 empty = pygame.transform.scale(empty, (60, 60))
@@ -83,15 +83,15 @@ class TTT(Game):
     def load(self):
         global loading
         clock.tick(time)
-        self.screen.blit(loadingpic,(0,0))
+        screen.blit(loadingpic,(0,0))
         font = pygame.font.Font(None, 50)
         dots = "." * (loading % 3 + 1)
         spaces = " " * (2 - loading % 3)
         loading_text = f"Loading{dots}{spaces} {loading}%"
         text = font.render(loading_text, True, (255, 255, 255))
-        self.screen.blit(text, (200, 480))
+        screen.blit(text, (200, 480))
         loading += 1
-    def apply(self):
+    def apply_move(self):
         for i in range(0,600,60):
             for j in range(0,600,60):
                 img_map = {
@@ -99,11 +99,13 @@ class TTT(Game):
                     'X':withx,
                     'O':witho
                 }
-                self.screen.blit(img_map[self.board[j//60][i//60]], (i, j))
+                screen.blit(img_map[self.board[j//60][i//60]], (i, j))
     def play_game(self):
         player = 'X' #game is gonna start with X
         winner = ' ' #used to check if winner is declared, if declared then who is winner 
-        global loading
+        global loading,screen
+        self.screen = pygame.display.get_surface()
+        screen = self.screen
         loading = 0 #used to set the loading page time
         count = 0 #used to check whether the board is full or any place is remained empty to declare whether its Draw or not 
         winner_count = 0 #used to print the winner onto the terminal for game.py to append the winner data in to history.csv
@@ -124,7 +126,7 @@ class TTT(Game):
             else:
                 #screening the game page
                 #displaying the game board
-                self.apply()
+                self.apply_move()
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         x,y=pygame.mouse.get_pos()
@@ -169,23 +171,27 @@ class TTT(Game):
                         elif win_type == "diag2":
                             start = (c*cell+cell//2,(r+4)*cell+cell//2)
                             end = ((c+4)*cell+cell//2,r*cell+cell//2)
+                        self.apply_move()
+                        pygame.display.update()
                         pygame.draw.line(screen,(255,255,255),start,end,5)
+                    pygame.display.update()
+                    clock.tick(1)
                     small = pygame.transform.smoothscale(screen,(150,150))
                     blurred = pygame.transform.smoothscale(small,(800,600))
-                    self.screen.blit(blurred,(0,0))
+                    screen.blit(blurred,(0,0))
                     overlay = pygame.Surface((800,600))
                     overlay.set_alpha(75)
                     overlay.fill((0,0,0))
-                    self.screen.blit(overlay,(0,0))
+                    screen.blit(overlay,(0,0))
                     font = pygame.font.Font(None,200)
                     if winner == 'O' or winner == 'X':
                         text = font.render(f"{winner} Wins!",True,(255,255,255))
                     elif count == 100:
                         text = font.render(f"It's Draw",True,(255,255,255))
-                    self.screen.blit(text,(50,250))
+                    screen.blit(text,(50,250))
                     font = pygame.font.Font(None,80)
                     text2 = font.render("Press E to Exit",True,(200,200,200))
-                    self.screen.blit(text2,(100,370))
+                    screen.blit(text2,(100,370))
                     pygame.display.update()
                     clock.tick(0.5)
                     if winner == 'X':
@@ -200,7 +206,7 @@ class TTT(Game):
                 if message_display != " " and message_timer > 0:
                     font = pygame.font.Font(None, 36)
                     text = font.render(message_display, True, (255, 0, 0))
-                    self.screen.blit(text, (200, 550))
+                    screen.blit(text, (200, 550))
                     message_timer -= 1
                     if message_timer == 0:
                         message_display = " "
@@ -209,7 +215,7 @@ class TTT(Game):
             if winner == ' ':
                 press_e = "press E to exit"
                 press_e = font.render(press_e,True,(200,200,200))
-                self.screen.blit(press_e,(610,192))
+                screen.blit(press_e,(610,192))
             #displaying the usernames of the players
             font=pygame.font.Font(None,36)
             self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))

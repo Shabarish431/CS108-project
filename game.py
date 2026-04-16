@@ -1,6 +1,5 @@
 import pygame
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 import csv
 from datetime import datetime
@@ -20,9 +19,10 @@ def recording(status,winner,loser,game):
         
 
 class Game():
-    screen = pygame.display.set_mode((800,600))
+    # screen = None #pygame.display.set_mode((800,600))
     def init_screen(self,w=800,h=600):
-        self.screen = pygame.display.set_mode((w,h))
+        Game.screen = pygame.display.set_mode((w,h))
+        pygame.display.set_caption("Mini Gaming Hub")
         self.screen.fill('azure4')
         font = pygame.font.Font(None,50)
         text = font.render("Loading",True,"black")
@@ -45,13 +45,13 @@ class Game():
 
     def switch_turn(self,player,a,b):
         return b if player == a else a
-    def check_win(board,player):
+    def check_win(self,board,player):
         pass
-    def load():
+    def load(self):
         pass
-    def apply():
+    def apply_move(self):
         pass
-    def play_game():
+    def play_game(self):
         pass
 
     def __init__(self,player1,player2):
@@ -62,29 +62,27 @@ class Game():
         self.username1 = player1 # first player starts game
         self.username2 = player2
 
+sortby = 1
 
 def leaderboard(sortby):
     subprocess.Popen(["bash","./leaderboard.sh",str(sortby)])
 def analysis():
     subprocess.Popen(["python3","./analysis.py"])
-loaded = False
 def main_menu():
+    global sortby
     pygame.init() #initializing the pygame
-    pygame.display.set_caption("Mini Gaming Hub")
     G = Game(sys.argv[1],sys.argv[2])
-    screen=G.screen #declaring the size of the screen
+    #screen=G.screen #declaring the size of the screen
     G.init_screen()
     running = True
     def pg(game,gn):
-        # global loaded
-        # if not loaded :
-        #     game.init_screen()
-        #     game.load()
-        #     loaded = True
+        global sortby
+        pygame.display.set_caption(gn)
         status, winner, loser = game.play_game()
         recording(status,winner,loser,gn)
-        loaded = False
         G.init_screen()
+        leaderboard(sortby)
+        analysis()
 
     while running:
         # gid = 2
@@ -92,28 +90,32 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                leaderboard(1)
+                leaderboard(sortby)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
                 analysis()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 gid = 2
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_4:
+                gid = 1
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_5:
+                gid = 3
         if gid==2:
             from games.tictactoe import TTT
             tictactoe = TTT(G.username1,G.username2)
-            pg(tictactoe,"tictactoe")
+            pg(tictactoe,"TIC-TAC-TOE")
         elif gid == 1:
             from games.othello import OT
             othello = OT(G.username1,G.username2)
-            pg(othello,"othello")
+            pg(othello,"OTHELLO")
         elif gid == 3:
             from games.connect4 import CO
             connect4 = CO(G.username1,G.username2)
-            pg(connect4,"connect4")
+            pg(connect4,"CONNECT4")
             
         pygame.display.update()
-    pygame.quit()
-    sys.exit()
 
 if __name__ == "__main__":
     main_menu()

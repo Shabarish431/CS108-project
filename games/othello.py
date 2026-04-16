@@ -2,21 +2,14 @@ import sys
 import pygame
 import numpy as np
 import os
-pygame.init()
-screen=pygame.display.set_mode((800, 600))#settign the screen size
-pygame.display.set_caption("OTHELLO")
-board=np.full((8,8),' ')#initializing the board game
-board[3,3], board[3,4] = 'W', 'B'#initial set up of the game board
-board[4,3], board[4,4] = 'B', 'W'
-username1 = sys.argv[1]#decalringm the players
-username2 = sys.argv[2]
-player = 'B' #game is gonna start with B
+# pygame.init()
+# screen=pygame.display.set_mode((800, 600))#settign the screen size
+# pygame.display.set_caption("OTHELLO")
+# username1 = sys.argv[1]#decalringm the players
+# username2 = sys.argv[2]
 winner_display = ' ' #to dispay at the end of the game
 winner = ' ' #who is the winner
-loading = 0 #used to set the time of the loading page
-count = 0 #used to print the winner usernaem in the terminal
-message_display = ' ' #used to decalre the message to be delivered if needed
-message_timer = 0 #used to set the timer of the messager
+
 #declared all the images needed
 base_path = os.path.dirname(__file__)
 empty = pygame.image.load(os.path.join(base_path, "othelloempty.png"))
@@ -30,20 +23,10 @@ loading_i = pygame.transform.scale(loading_i, (600, 600))
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
 #this function is used to declare whether teh opponent is on that direction
-def render_user(x, y, title, label, username, color):
-    font = pygame.font.Font(None, 36)
 
-    t1 = font.render(title, True, color)
-    t2 = font.render(label, True, color)
+sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
+from game import Game
 
-    if len(username) > 13:
-        username = username[:11] + "..."
-
-    t3 = font.render(username, True, color)
-
-    screen.blit(t1, (x, y))
-    screen.blit(t2, (x, y + 27))
-    screen.blit(t3, (x, y + 54))
 def check_direction(board, r, c, dr, dc, player, found_opponent=False):
     r += dr
     c += dc
@@ -91,19 +74,7 @@ def is_valid_move(board, r, c, player):
         check_direction(board, r, c, 1, -1, player) or
         check_direction(board, r, c, 1, 1, player)
     )
-#this function is used to make the move if the selected cell is valid and flips the opponent cells
-def apply_move(board, r, c, player):
-    directions = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
-    def apply_dir(i=0):
-        if i == len(directions):
-            return
-        dr, dc = directions[i]
-        # CHECK before placing
-        if check_direction(board, r, c, dr, dc, player):
-            flip_direction(board, r, c, dr, dc, player)
-        apply_dir(i + 1)
-    apply_dir()
-    board[r, c] = player
+
 #this function is used to say whether teh player has valid moves or not 
 def has_valid_move(board, player, r=0, c=0):
     if r == 8:
@@ -118,29 +89,45 @@ def count_score(board):
     x = np.sum(board == 'B')
     o = np.sum(board == 'W')
     return x, o
-def check_win(board,player):
-    global winner_display,winner
-    next_player = 'W' if player == 'B' else 'B'
-    if not has_valid_move(board,player) and not has_valid_move(board,next_player):
-        x, o = count_score(board)
-        if x == o :
-            winner_display="It's Draw"
-            winner = "Draw"
-            return True
-        elif x>o :
-            winner_display="player B is winner"
-            winner = "B"
-            return True
-        elif o>x :
-            winner_display="player W is winner"
-            winner = "W"
-            return True
-    elif not has_valid_move(board, player) and has_valid_move(board,next_player):
-        return "skip"
-while True:
-    screen.fill((15,79,34))
-    #this is for loading page
-    if loading <= 100:
+
+class OT(Game):
+
+    def check_win(self,board,player):
+        global winner_display,winner
+        next_player = self.switch_turn(player,"W","B")
+        if not has_valid_move(board,player) and not has_valid_move(board,next_player):
+            x, o = count_score(board)
+            if x == o :
+                winner_display="It's Draw"
+                winner = "Draw"
+                return True
+            elif x>o :
+                winner_display="player B is winner"
+                winner = "B"
+                return True
+            elif o>x :
+                winner_display="player W is winner"
+                winner = "W"
+                return True
+        elif not has_valid_move(board, player) and has_valid_move(board,next_player):
+            return "skip"
+    
+    #this function is used to make the move if the selected cell is valid and flips the opponent cells
+    def apply_move(self,board, r, c, player):
+        directions = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
+        def apply_dir(i=0):
+            if i == len(directions):
+                return
+            dr, dc = directions[i]
+            # CHECK before placing
+            if check_direction(board, r, c, dr, dc, player):
+                flip_direction(board, r, c, dr, dc, player)
+            apply_dir(i + 1)
+        apply_dir()
+        board[r, c] = player
+    
+    def load(self):
+        global loading
         clock.tick(time)
         screen.blit(loading_i,(0,0))
         font = pygame.font.Font(None, 36)
@@ -150,84 +137,116 @@ while True:
         loading_text = font.render(loading_text,True,(255,255,255))
         screen.blit(loading_text, (200, 550))
         loading += 1
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
-                pygame.quit()
-                sys.exit() 
-    else:
-        #game screen displayig 
-        #game board display
-        for i in range(0,600,75):
-            for j in range(0,600,75):
-                img_map = {
-                    ' ':empty,
-                    'W':white,
-                    'B':black
-                }
-                screen.blit(img_map[board[i//75][j//75]], (i, j))
-        result = check_win(board, player)
-        if result == True:
-            if count == 0:
-                if winner == 'W':
-                    print(username2)
-                if winner == 'B':
-                    print(username1)
-                count += 1
-            overlay = pygame.Surface((800,600))
-            overlay.set_alpha(75)
-            overlay.fill((0,0,0))
-            screen.blit(overlay,(0,0))
-            font = pygame.font.Font(None, 36)
-            text = font.render(winner_display, True, (255, 0, 0))
-            text1 = font.render("press e to Exit", True, (255, 0, 0))
-            screen.blit(text, (190, 500))
-            screen.blit(text1,(200, 550))
-        elif result == "skip": #this is for skipping turn if the player does not have valid moves
-            message_display = f"No valid moves for {player}, skipping turn."
-            message_timer = 30
-            player = 'W' if player == 'B' else 'B'
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x,y=pygame.mouse.get_pos()
-                if message_timer > 0 or result == True:
-                    continue
-                if board[x//75][y//75] != ' ':
-                    #display occupied cell
-                    message_display = "Cell Occupied!"
-                    message_timer = 30
-                elif not is_valid_move(board, x//75, y//75, player):
-                    #display invalid move
-                        message_display = "Invalid Move!"
-                        message_timer = 30
-                else:
-                    apply_move(board, x//75, y//75, player)
-                    player = 'W' if player == 'B' else 'B'
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e): #to decalre the opponent as winner if teh current player exits before game is completed
-                if winner == ' ':
-                    if player == 'B':
-                        print(username1)
-                    if player == 'W':
-                        print(username2)
-                pygame.quit()
-                sys.exit()
-        if message_display != " " and message_timer > 0: #used to display the message if the selected cell is invalid or occupied
-            font = pygame.font.Font(None, 36)
-            text = font.render(message_display, True, (255, 0, 0))
-            if message_display == "Cell Occupied!" or message_display == "Invalid Move!":
-                screen.blit(text, (200, 550))
+    
+    def play_game(self):
+        username1 = self.username1
+        username2 = self.username2
+        global loading,screen  #used to set the time of the loading page
+        self.screen = pygame.display.get_surface()
+        screen = self.screen
+        loading = 0
+        board = self.board
+        player = 'B' #game is gonna start with B
+        message_display = ' ' #used to decalre the message to be delivered if needed
+        message_timer = 0 #used to set the timer of the messager
+        while True:
+            screen.fill((15,79,34))
+            #this is for loading page
+            if loading <= 100:
+                self.load()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
+                        pygame.quit()
+                        sys.exit() 
             else:
-                screen.blit(text,(100, 550))
-            message_timer -= 1
-            if message_timer == 0:
-                message_display = " "
-    #displaying the usernames of the players
-    font=pygame.font.Font(None,36)
-    render_user(610, 10, "Username Of", "Player Y:", username1, (255,255,255))
-    render_user(610, 101, "Username Of", "Player R:", username2, (255,255,255))
-    #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
-    if winner == ' ':
-        press_e = "press E to exit"
-        press_e = font.render(press_e,True,(200,200,200))
-        screen.blit(press_e,(610,192))
-    clock.tick(60)
-    pygame.display.update()
+                #game screen displayig 
+                #game board display
+                for i in range(0,600,75):
+                    for j in range(0,600,75):
+                        img_map = {
+                            ' ':empty,
+                            'W':white,
+                            'B':black
+                        }
+                        screen.blit(img_map[board[i//75][j//75]], (i, j))
+                result = self.check_win(board, player)
+                if result == True:
+                    overlay = pygame.Surface((800,600))
+                    overlay.set_alpha(75)
+                    overlay.fill((0,0,0))
+                    screen.blit(overlay,(0,0))
+                    font = pygame.font.Font(None, 36)
+                    text = font.render(winner_display, True, (255, 0, 0))
+                    text1 = font.render("press e to Exit", True, (255, 0, 0))
+                    screen.blit(text, (190, 500))
+                    screen.blit(text1,(200, 550))
+                    pygame.display.update()
+                    clock.tick(1)
+                    if winner == 'W':
+                        print(username2)
+                        return 1,username2,username1
+                    if winner == 'B':
+                        print(username1)
+                        return 1,username1,username2
+                    if winner == "Draw":
+                        print("Draw")
+                        return 2,username1,username2
+                elif result == "skip": #this is for skipping turn if the player does not have valid moves
+                    message_display = f"No valid moves for {player}, skipping turn."
+                    message_timer = 30
+                    player = self.switch_turn(player,"W","B")
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x,y=pygame.mouse.get_pos()
+                        if message_timer > 0 or result == True:
+                            continue
+                        if board[x//75][y//75] != ' ':
+                            #display occupied cell
+                            message_display = "Cell Occupied!"
+                            message_timer = 30
+                        elif not is_valid_move(board, x//75, y//75, player):
+                            #display invalid move
+                                message_display = "Invalid Move!"
+                                message_timer = 30
+                        else:
+                            self.apply_move(board, x//75, y//75, player)
+                            player = self.switch_turn(player,"W","B")
+                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e): #to decalre the opponent as winner if teh current player exits before game is completed
+                        if winner == ' ':
+                            if player == 'B':
+                                print(username2)
+                                return 1,username2,username1
+                            if player == 'W':
+                                print(username1)
+                                return 1,username1,username2
+                        pygame.quit()
+                        sys.exit()
+                if message_display != " " and message_timer > 0: #used to display the message if the selected cell is invalid or occupied
+                    font = pygame.font.Font(None, 36)
+                    text = font.render(message_display, True, (255, 0, 0))
+                    if message_display == "Cell Occupied!" or message_display == "Invalid Move!":
+                        screen.blit(text, (200, 550))
+                    else:
+                        screen.blit(text,(100, 550))
+                    message_timer -= 1
+                    if message_timer == 0:
+                        message_display = " "
+            #displaying the usernames of the players
+            font=pygame.font.Font(None,36)
+            self.render_user(610, 10, "Username Of", "Player B:", username1, (255,255,255))
+            self.render_user(610, 101, "Username Of", "Player W:", username2, (255,255,255))
+            #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
+            if winner == ' ':
+                press_e = "press E to exit"
+                press_e = font.render(press_e,True,(200,200,200))
+                screen.blit(press_e,(610,192))
+            clock.tick(60)
+            pygame.display.update()
+
+    def __init__(self,player1,player2):
+        super().__init__(player1,player2)
+        self.board=np.full((8,8),' ')#initializing the board game
+        self.board[3,3], self.board[3,4] = 'W', 'B'#initial set up of the game board
+        self.board[4,3], self.board[4,4] = 'B', 'W'
+    
+

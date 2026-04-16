@@ -9,9 +9,9 @@ declare -A gn #game_name
 declare -A users
 # Stores all the usernames(as keys) present in the history.csv, as all users don't play all games
 
-gn["othello"]=1
-gn["tictactoe"]=2
-gn["connect4"]=3
+gn["OTHELLO"]=1
+gn["TIC-TAC-TOE"]=2
+gn["CONNECT4"]=3
 w=0 # win count
 l=0 # lose count
 # both are used for the ratio
@@ -43,25 +43,25 @@ while IFS=',' read -r status win los date game; do
     fi
 
     if (($status == 1)); then # if the game isn't draw
-        if [[ ${game} == "othello" ]]; then
+        if [[ ${game} == "OTHELLO" ]]; then
         # games["(gameID),(win/lose/draw ID),(Username)"]
             ((games["1,1,${win}"]++))
             ((games["1,2,${los}"]++))
-        elif [[ ${game} == "connect4" ]]; then
+        elif [[ ${game} == "CONNECT4" ]]; then
             ((games["3,1,${win}"]++))
             ((games["3,2,${los}"]++))
-        elif [[ ${game} == "tictactoe" ]]; then
+        elif [[ ${game} == "TIC-TAC-TOE" ]]; then
             ((games["2,1,${win}"]++))
             ((games["2,2,${los}"]++))
         fi
     else # if the game is draw
-        if [[ ${game} == "othello" ]]; then
+        if [[ ${game} == "OTHELLO" ]]; then
             ((games["1,3,${win}"]++))
             ((games["1,3,${los}"]++))
-        elif [[ ${game} == "connect4" ]]; then
+        elif [[ ${game} == "CONNECT4" ]]; then
             ((games["3,3,${win}"]++))
             ((games["3,3,${los}"]++))
-        elif [[ ${game} == "tictactoe" ]]; then
+        elif [[ ${game} == "TIC-TAC-TOE" ]]; then
             ((games["2,3,${win}"]++))
             ((games["2,3,${los}"]++))
         fi

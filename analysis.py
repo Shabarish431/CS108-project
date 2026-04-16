@@ -13,9 +13,9 @@ with open("history.csv",mode='r') as file:
                 players[row[1]] += 1
             else:
                 players[row[1]] = 1
-        if row[4]=="othello": games[0]+=1
-        if row[4]=="tictactoe": games[1]+=1
-        if row[4]=="connect4": games[2]+=1
+        if row[4]=="OTHELLO": games[0]+=1
+        if row[4]=="TIC-TAC-TOE": games[1]+=1
+        if row[4]=="CONNECT4": games[2]+=1
 
 tup = list(players.items())
 tup.sort(key=lambda x: x[1], reverse=True)
@@ -28,7 +28,7 @@ if len(win_count)>5 :
     win_count = win_count[0:5]
     
 
-game_names = ["Othello","Tic-Tac-Toe","Connect4"]
+game_names = ["OTHELLO","TIC-TAC-TOE","CONNECT4"]
 total = sum(games)
 for i in range(0,3):
     games[i] = games[i]/total
