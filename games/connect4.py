@@ -116,8 +116,7 @@ class CO(Game):
                 self.load()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
-                        pygame.quit()
-                        sys.exit()                
+                        return 3,username1,username2
             else:
                 screen.fill('Blue')
                 #display the game page 
@@ -147,8 +146,6 @@ class CO(Game):
                             winner = 'Y'
                             print(username1)
                             return 1,username1,username2
-                        pygame.quit()
-                        sys.exit()
                 if winner == 'Y' or winner == 'R':
                     #drawing a line if the winner is declared 
                     self.apply_move()

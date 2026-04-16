@@ -156,8 +156,7 @@ class OT(Game):
                 self.load()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
-                        pygame.quit()
-                        sys.exit() 
+                        return 3,username1,username2
             else:
                 #game screen displayig 
                 #game board display
@@ -200,17 +199,18 @@ class OT(Game):
                         x,y=pygame.mouse.get_pos()
                         if message_timer > 0 or result == True:
                             continue
-                        if board[x//75][y//75] != ' ':
-                            #display occupied cell
-                            message_display = "Cell Occupied!"
-                            message_timer = 30
-                        elif not is_valid_move(board, x//75, y//75, player):
-                            #display invalid move
-                                message_display = "Invalid Move!"
+                        if x <= 600 :
+                            if board[x//75][y//75] != ' ':
+                                #display occupied cell
+                                message_display = "Cell Occupied!"
                                 message_timer = 30
-                        else:
-                            self.apply_move(board, x//75, y//75, player)
-                            player = self.switch_turn(player,"W","B")
+                            elif not is_valid_move(board, x//75, y//75, player):
+                                #display invalid move
+                                    message_display = "Invalid Move!"
+                                    message_timer = 30
+                            else:
+                                self.apply_move(board, x//75, y//75, player)
+                                player = self.switch_turn(player,"W","B")
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e): #to decalre the opponent as winner if teh current player exits before game is completed
                         if winner == ' ':
                             if player == 'B':
@@ -219,8 +219,6 @@ class OT(Game):
                             if player == 'W':
                                 print(username1)
                                 return 1,username1,username2
-                        pygame.quit()
-                        sys.exit()
                 if message_display != " " and message_timer > 0: #used to display the message if the selected cell is invalid or occupied
                     font = pygame.font.Font(None, 36)
                     text = font.render(message_display, True, (255, 0, 0))

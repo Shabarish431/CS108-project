@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import sys
 import csv
+import os
 from datetime import datetime
 import subprocess
 
@@ -11,22 +12,36 @@ if len(sys.argv) < 3:
 
 status = None
 winner = None
+base_path = os.path.dirname(__file__)
+wi = pygame.image.load(os.path.join(base_path,"MW.png"))
+li = pygame.image.load(os.path.join(base_path,"ML.png"))
+di = pygame.image.load(os.path.join(base_path,"MD.png"))
+ri = pygame.image.load(os.path.join(base_path,"MR.png"))
+pu = pygame.image.load(os.path.join(base_path,"P.png"))
+image = wi
+clock = pygame.time.Clock()
+
 def recording(status,winner,loser,game):
     date = datetime.today().strftime("%d-%m-%Y")
     with open("history.csv",mode='a',newline='') as file:
         writer = csv.writer(file)
         writer.writerow([status,winner,loser,date,game])
-        
+def load_image(screen,image):
+    screen.blit(image,(0,0))
+    font = pygame.font.Font(None,35)
+    text1 = font.render(username1,True,"white")
+    screen.blit(text1,(70,70))
+    text2 = font.render(username2,True,"white")
+    screen.blit(text2,(270,70))
 
 class Game():
     # screen = None #pygame.display.set_mode((800,600))
     def init_screen(self,w=800,h=600):
         Game.screen = pygame.display.set_mode((w,h))
         pygame.display.set_caption("Mini Gaming Hub")
-        self.screen.fill('azure4')
-        font = pygame.font.Font(None,50)
-        text = font.render("Loading",True,"black")
-        self.screen.blit(text,(100,100))
+        global screen
+        screen = self.screen
+        load_image(screen,image)
         
     def render_user(self,x, y, title, label, username, color):
         font = pygame.font.Font(None, 36)
@@ -35,9 +50,11 @@ class Game():
         t2 = font.render(label, True, color)
 
         if len(username) > 13:
-            username = username[:11] + "..."
+            username1 = username[:11] + "..."
+        else :
+            username1 = username
 
-        t3 = font.render(username, True, color)
+        t3 = font.render(username1, True, color)
 
         self.screen.blit(t1, (x, y))
         self.screen.blit(t2, (x, y + 27))
@@ -59,62 +76,109 @@ class Game():
         self.fm = None
         self.sm = None
         self.winner = None
-        self.username1 = player1 # first player starts game
-        self.username2 = player2
+        global username1,username2
+        username1, self.username1 = player1,player1 # first player starts game
+        username2, self.username2 = player2,player2
 
 sortby = 1
+def pop_up(screen):
+    screen.blit(pu,(100,150))
+    font = pygame.font.Font(None,35)
+    text = font.render(username1,True,"white")
+    screen.blit(text,(140,190))
+    
 
 def leaderboard(sortby):
     subprocess.Popen(["bash","./leaderboard.sh",str(sortby)])
 def analysis():
     subprocess.Popen(["python3","./analysis.py"])
 def main_menu():
-    global sortby
+    global sortby,image,username1,username2
     pygame.init() #initializing the pygame
     G = Game(sys.argv[1],sys.argv[2])
-    #screen=G.screen #declaring the size of the screen
     G.init_screen()
     running = True
+    GNS = True
+    p1f = False
+    gid = None
     def pg(game,gn):
         global sortby
+        nonlocal p1f, GNS,gid
         pygame.display.set_caption(gn)
         status, winner, loser = game.play_game()
-        recording(status,winner,loser,gn)
+        if status != 3 : 
+            recording(status,winner,loser,gn)
+            leaderboard(sortby)
+            analysis()
         G.init_screen()
-        leaderboard(sortby)
-        analysis()
+        GNS = True
+        p1f = False
+        gid = None
 
     while running:
         # gid = 2
-        gid = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                leaderboard(sortby)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                analysis()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-                gid = 2
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_4:
-                gid = 1
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_5:
-                gid = 3
-        if gid==2:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                i,j = pygame.mouse.get_pos()
+                if i in range(560,741) and GNS:
+                    if j in range(90,140):
+                        sortby = 1
+                        image = wi
+                        load_image(screen,image)
+                    elif j in range(141,190):
+                        sortby = 2
+                        image = li
+                        load_image(screen,image)
+                    elif j in range(191,240):
+                        sortby = 3
+                        image = di
+                        load_image(screen,image)
+                    elif j in range(241,290):
+                        sortby = 4
+                        image = ri
+                        load_image(screen,image)
+                elif i in range(50,450) and GNS:
+                    if j in range(160,260):
+                        GNS = False
+                        gid = 3
+                        pop_up(screen)
+                    elif j in range(300,400):
+                        GNS = False
+                        pop_up(screen)
+                        gid = 1
+                    elif j in range(440,540):
+                        GNS = False
+                        pop_up(screen)
+                        gid = 2
+                elif j in range(350,400) and not p1f:
+                    if i in range(200,300):
+                        p1f = True
+                    elif i in range(500,600):
+                        username1,username2 = username2,username1
+                        p1f = True
+                if i in range(540,760) and GNS:
+                    if j in range(350,450):
+                        leaderboard(sortby)
+                    if j in range(480,580):
+                        analysis()
+
+        if gid==2 and p1f:
             from games.tictactoe import TTT
-            tictactoe = TTT(G.username1,G.username2)
+            tictactoe = TTT(username1,username2)
             pg(tictactoe,"TIC-TAC-TOE")
-        elif gid == 1:
+        elif gid == 1 and p1f:
             from games.othello import OT
-            othello = OT(G.username1,G.username2)
+            othello = OT(username1,username2)
             pg(othello,"OTHELLO")
-        elif gid == 3:
+        elif gid == 3 and p1f:
             from games.connect4 import CO
-            connect4 = CO(G.username1,G.username2)
+            connect4 = CO(username1,username2)
             pg(connect4,"CONNECT4")
-            
+        clock.tick(60)
         pygame.display.update()
 
 if __name__ == "__main__":

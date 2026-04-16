@@ -9,6 +9,8 @@ declare -A gn #game_name
 declare -A users
 # Stores all the usernames(as keys) present in the history.csv, as all users don't play all games
 
+mid=("" "Win count" "Lose count" "Draw count" "Win/Lose Ratio")
+
 gn["OTHELLO"]=1
 gn["TIC-TAC-TOE"]=2
 gn["CONNECT4"]=3
@@ -72,7 +74,16 @@ done < history.csv
 
 pi(){ # print info
     # sorted based on the field and printed to the terminal
-    sort -k "${f}" -r ginfo > ginfo1
+    if ((f < 5)); then
+        sort -k "${f}" -rn ginfo > ginfo1
+    # to sort the instances where no losses occured
+    elif ((f==5)); then
+        sort -k "${f}" -rn ginfo > temp
+        awk ' $5 =="Pro" {printf "%-25s %-8s %-8s %-8s %-8s\n", $1, $2, $3, $4, $5 }' temp >>ginfo1
+        awk ' $5 != "Pro" && $5 != "-" {printf "%-25s %-8s %-8s %-8s %-8s\n", $1, $2, $3, $4, $5 }' temp >> ginfo1
+        awk ' $5 == "-" {printf "%-25s %-8s %-8s %-8s %-8s\n", $1, $2, $3, $4, $5} ' temp >> ginfo1
+        rm temp
+    fi
     awk '{printf "%-25s %-8s %-8s %-8s %-8s\n", $1, $2, $3, $4, $5 }' ginfo1
     # removing the files to ensure there is no file already present for later use
     rm ginfo ginfo1
@@ -95,6 +106,7 @@ cv(){ # calculate values
     fi
 }
 # print info for games (each game individually)
+echo -e "Leaderboards: sorted based on the ${mid[${metric}]}"
 for gam in "${!gn[@]}"; do
     echo "For Game ${gam}:"
     gid=${gn["${gam}"]}

@@ -115,14 +115,16 @@ class TTT(Game):
         username2 = self.username2
         while True:
             screen.fill((7,71,80))
+            if winner == ' ':
+                self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
+                self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
             #displaying the loading page
             if loading <= 100:
                 self.load()
                 for event in pygame.event.get():
                     #if they press e to exit and the game is declared as draw
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
-                        pygame.quit()
-                        sys.exit() 
+                        return 3,username1,username2
             else:
                 #screening the game page
                 #displaying the game board
@@ -154,8 +156,6 @@ class TTT(Game):
                                 winner = 'X'
                                 print(username1)
                                 return 1,username1,username2
-                        pygame.quit()
-                        sys.exit()
                 if winner != ' ' or count == 100:
                     if winner == 'O' or winner == 'X':
                         cell = 60
@@ -183,6 +183,8 @@ class TTT(Game):
                     overlay.set_alpha(75)
                     overlay.fill((0,0,0))
                     screen.blit(overlay,(0,0))
+                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
+                    self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
                     font = pygame.font.Font(None,200)
                     if winner == 'O' or winner == 'X':
                         text = font.render(f"{winner} Wins!",True,(255,255,255))
@@ -218,8 +220,6 @@ class TTT(Game):
                 screen.blit(press_e,(610,192))
             #displaying the usernames of the players
             font=pygame.font.Font(None,36)
-            self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-            self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
             clock.tick(60)
             pygame.display.update()
         
