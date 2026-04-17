@@ -125,44 +125,66 @@ class CO(Game):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         #selecting the cell
                         x, y = pygame.mouse.get_pos()
-                        col = min(x//100, 6)
-                        for i in range(6, -1, -1):
-                            if board[i][col] == ' ' and winner == ' ':
-                                board[i][col] = player
-                                won, info = self.check_win(board, player)
-                                if won:
-                                    winner = player
-                                    win_type, (r, c) = info
-                                player = self.switch_turn(player,"Y","R")
-                                board_count += 1
-                                break
+                        if x <= 700:
+                            col = min(x//100, 6)
+                            for i in range(6, -1, -1):
+                                if board[i][col] == ' ' and winner == ' ':
+                                    board[i][col] = player
+                                    won, info = self.check_win(board, player)
+                                    if won:
+                                        winner = player
+                                        win_type, (r, c) = info
+                                    player = self.switch_turn(player,"Y","R")
+                                    board_count += 1
+                                    break
                     #to decalre the opponent as winner if teh current player exits before game is completed
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
                         if player == 'Y' and winner == ' ':
                             winner = 'R'
-                            print(username2)
+                            overlay = pygame.Surface((900,700))
+                            overlay.set_alpha(75)
+                            overlay.fill((0,0,0))
+                            screen.blit(overlay,(0,0))
+                            font = pygame.font.Font(None, 200)
+                            winner_display = "R Wins!"
+                            text = font.render(winner_display, True, (255,255,255))
+                            screen.blit(text, (100, 250))
+                            self.render_user(710, 10, "Username Of", "Player Y:", username1, (255,255,255))
+                            self.render_user(710, 101,"username of", "player R:", username2, (255,255,255))
+                            pygame.display.update()
+                            clock.tick(1)
                             return 1,username2,username1
                         elif player == 'R' and winner == ' ':
                             winner = 'Y'
-                            print(username1)
+                            overlay = pygame.Surface((900,700))
+                            overlay.set_alpha(75)
+                            overlay.fill((0,0,0))
+                            screen.blit(overlay,(0,0))
+                            font = pygame.font.Font(None, 200)
+                            winner_display = "Y wins!"
+                            text = font.render(winner_display, True, (255,255,255))
+                            screen.blit(text, (100, 250))
+                            self.render_user(710, 10, "Username Of", "Player Y:", username1, (255,255,255))
+                            self.render_user(710, 101,"username of", "player R:", username2, (255,255,255))
+                            pygame.display.update()
+                            clock.tick(1)
                             return 1,username1,username2
                 if winner == 'Y' or winner == 'R':
                     #drawing a line if the winner is declared 
                     self.apply_move()
                     cell = 100
-                    draw_r = 6 - r
                     if win_type == "horizontal":
-                        start = (c*cell + cell//2, draw_r*cell + cell//2)
-                        end = ((c+3)*cell + cell//2, draw_r*cell + cell//2)
+                        start = (c*cell+cell//2,r*cell+cell//2)
+                        end = ((c+3)*cell+cell//2,r*cell+cell//2)
                     elif win_type == "vertical":
-                        start = (c*cell + cell//2, draw_r*cell + cell//2)
-                        end = (c*cell + cell//2, (draw_r-3)*cell + cell//2)
+                        start = (c*cell+cell//2,r*cell+cell//2)
+                        end = (c*cell+cell//2,(r+3)*cell+cell//2)
                     elif win_type == "diag1":
-                        start = (c*cell + cell//2, draw_r*cell + cell//2)
-                        end = ((c+3)*cell + cell//2, (draw_r+3)*cell + cell//2)
+                        start = (c*cell+cell//2,r*cell+cell//2)
+                        end = ((c+3)*cell+cell//2,(r+3)*cell+cell//2)
                     elif win_type == "diag2":
-                        start = (c*cell + cell//2, draw_r*cell + cell//2)
-                        end = ((c+3)*cell + cell//2, (draw_r-3)*cell + cell//2)
+                        start = (c*cell+cell//2,(r+3)*cell+cell//2)
+                        end = ((c+3)*cell+cell//2,r*cell+cell//2)
                     color = (255,242,0) if winner == 'Y' else (136,0,21)
                     pygame.draw.line(screen, color, start, end, 20)
                     pygame.display.update()
@@ -184,20 +206,16 @@ class CO(Game):
                         winner_text = "It's Draw"
                     text = font.render(winner_text, True, (255, 255, 255))
                     screen.blit(text, (100, 250))
-                    font = pygame.font.Font(None, 80)
-                    text2 = font.render("Press E to Exit", True, (200, 200, 200))
-                    screen.blit(text2, (150, 400))
+                    self.render_user(710, 10, "Username Of", "Player Y:", username1, (255,255,255))
+                    self.render_user(710, 101,"username of", "player R:", username2, (255,255,255))
                     pygame.display.update()
                     clock.tick(1)
                     #to print the winner username on terminal
                     if winner == 'Y':
-                        print(username1)
                         return 1,username1,username2
                     elif winner == 'R':
-                        print(username2)
                         return 1,username2,username1
                     elif board_count == 49:
-                        print("It's Draw")
                         return 2,username1,username2
                 #displaying the usernames of the players
                 font=pygame.font.Font(None,36)
@@ -205,7 +223,7 @@ class CO(Game):
                 self.render_user(710, 101,"username of", "player R:", username2, (255,255,255))
                 #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
                 if winner == ' ':
-                    press_e = "press E to exit"
+                    press_e = "Press E to exit."
                     press_e = font.render(press_e,True,(200,200,200))
                     screen.blit(press_e,(710,192))
             clock.tick(60)
