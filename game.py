@@ -26,7 +26,7 @@ def recording(status,winner,loser,game):
     with open("history.csv",mode='a',newline='') as file:
         writer = csv.writer(file)
         writer.writerow([status,winner,loser,date,game])
-def load_image(screen,image):
+def load_image(screen):
     screen.blit(image,(0,0))
     font = pygame.font.Font(None,35)
     text1 = font.render(username1,True,"white")
@@ -41,7 +41,7 @@ class Game():
         pygame.display.set_caption("Mini Gaming Hub")
         global screen
         screen = self.screen
-        load_image(screen,image)
+        load_image(screen)
         
     def render_user(self,x, y, title, label, username, color):
         font = pygame.font.Font(None, 36)
@@ -82,6 +82,7 @@ class Game():
 
 sortby = 1
 def pop_up(screen):
+    screen.fill("black")
     screen.blit(pu,(100,150))
     font = pygame.font.Font(None,35)
     text = font.render(username1,True,"white")
@@ -93,7 +94,8 @@ def leaderboard(sortby):
 def analysis():
     subprocess.Popen(["python3","./analysis.py"])
 def main_menu():
-    global sortby,image,username1,username2
+    global sortby,image,username1,username2,pop
+    pop = False
     pygame.init() #initializing the pygame
     G = Game(sys.argv[1],sys.argv[2])
     G.init_screen()
@@ -117,6 +119,10 @@ def main_menu():
 
     while running:
         # gid = 2
+        if GNS:
+            load_image(screen)
+        if not GNS:
+            pop_up(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -128,31 +134,28 @@ def main_menu():
                     if j in range(90,140):
                         sortby = 1
                         image = wi
-                        load_image(screen,image)
+                        load_image(screen)
                     elif j in range(141,190):
                         sortby = 2
                         image = li
-                        load_image(screen,image)
+                        load_image(screen)
                     elif j in range(191,240):
                         sortby = 3
                         image = di
-                        load_image(screen,image)
+                        load_image(screen)
                     elif j in range(241,290):
                         sortby = 4
                         image = ri
-                        load_image(screen,image)
+                        load_image(screen)
                 elif i in range(50,450) and GNS:
                     if j in range(160,260):
                         GNS = False
                         gid = 3
-                        pop_up(screen)
                     elif j in range(300,400):
                         GNS = False
-                        pop_up(screen)
                         gid = 1
                     elif j in range(440,540):
                         GNS = False
-                        pop_up(screen)
                         gid = 2
                 elif j in range(350,400) and not p1f:
                     if i in range(200,300):
