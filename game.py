@@ -11,13 +11,15 @@ if len(sys.argv) < 3:
     sys.exit()
 status = None
 winner = None
+sort_active = False
 base_path = os.path.dirname(__file__)
 wi = pygame.image.load(os.path.join(base_path,"MW.png"))
 li = pygame.image.load(os.path.join(base_path,"ML.png"))
 di = pygame.image.load(os.path.join(base_path,"MD.png"))
 ri = pygame.image.load(os.path.join(base_path,"MR.png"))
 pu = pygame.image.load(os.path.join(base_path,"P.png"))
-image = wi
+nss = pygame.image.load(os.path.join(base_path,"MWS.png"))
+image = nss
 clock = pygame.time.Clock()
 def recording(status,winner,loser,game):
     date = datetime.today().strftime("%d-%m-%Y")
@@ -90,7 +92,7 @@ def leaderboard(sortby):
 def analysis():
     subprocess.Popen(["python3","./analysis.py"])
 def main_menu():
-    global sortby,image,username1,username2,pop
+    global sortby,image,username1,username2,pop,sort_active
     pop = False
     pygame.init() #initializing the pygame
     G = Game(sys.argv[1],sys.argv[2])
@@ -125,24 +127,52 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 i,j = pygame.mouse.get_pos()
-                if i in range(560,741) and GNS:
-                    if j in range(90,140):
-                        sortby = 1
+                if i in range(540,760) and j in range(37,90) and GNS:
+                    sort_active = not sort_active
+                    print(sort_active)
+                if sort_active == True:
+                    if sortby == 1:
                         image = wi
                         load_image(screen,image)
-                    elif j in range(141,190):
-                        sortby = 2
+                        pygame.display.update()
+                    elif sortby == 2:
                         image = li
                         load_image(screen,image)
-                    elif j in range(191,240):
-                        sortby = 3
+                        pygame.display.update()
+                    elif sortby == 3:
                         image = di
                         load_image(screen,image)
-                    elif j in range(241,290):
-                        sortby = 4
+                        pygame.display.update()
+                    elif sortby == 4:
                         image = ri
                         load_image(screen,image)
-                elif i in range(50,450) and GNS:
+                        pygame.display.update()
+                    if i in range(560,741) and GNS:
+                        if j in range(90,140):
+                            sortby = 1
+                            image = wi
+                            load_image(screen,image)
+                            pygame.display.update()
+                        elif j in range(141,190):
+                            sortby = 2
+                            image = li
+                            load_image(screen,image)
+                            pygame.display.update()
+                        elif j in range(191,240):
+                            sortby = 3
+                            image = di
+                            load_image(screen,image)
+                            pygame.display.update()
+                        elif j in range(241,290):
+                            sortby = 4
+                            image = ri
+                            load_image(screen,image)
+                            pygame.display.update()
+                if sort_active == False and GNS:
+                    image = nss
+                    load_image(screen,image)
+                    pygame.display.update()
+                if i in range(50,450) and GNS:
                     if j in range(160,260):
                         GNS = False
                         gid = 3
@@ -163,6 +193,7 @@ def main_menu():
                         p1f = True
                 if i in range(540,760) and GNS:
                     if j in range(350,450):
+                        print(sortby)
                         leaderboard(sortby)
                     if j in range(480,580):
                         analysis()
