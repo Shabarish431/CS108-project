@@ -56,6 +56,8 @@ class Game():
     def check_win(self,board,player):
         pass
     def load(self,screen,a,b,c,loading):
+        time = np.random.randint(15,20)
+        clock.tick(time)
         screen.blit(a,(0,0))
         fs = "." * (loading % 3 + 1)
         spaces = " " * (2 - (loading % 3))
@@ -113,7 +115,7 @@ def main_menu():
     while running:
         # gid = 2
         if GNS:
-            load_image(screen)
+            load_image(screen,image)
         if not GNS:
             pop_up(screen)
         for event in pygame.event.get():

@@ -153,7 +153,6 @@ class OT(Game):
             #this is for loading page
             if loading <= 100:
                 loading = self.load(screen,loading_i,200,550,loading)
-                print(loading)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
                         return 3,username1,username2
