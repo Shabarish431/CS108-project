@@ -1,3 +1,4 @@
+#othello
 import sys
 import pygame
 import numpy as np
@@ -9,7 +10,6 @@ import os
 # username2 = sys.argv[2]
 winner_display = ' ' #to dispay at the end of the game
 winner = ' ' #who is the winner
-
 #declared all the images needed
 base_path = os.path.dirname(__file__)
 empty = pygame.image.load(os.path.join(base_path, "othelloempty.png"))
@@ -25,7 +25,6 @@ valid = pygame.transform.scale(valid, (75,75))
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
 #this function is used to declare whether teh opponent is on that direction
-
 sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
 from game import Game
 def get_valid_moves(board, player):
@@ -91,7 +90,6 @@ def is_valid_move(board, r, c, player):
         check_direction(board, r, c, 1, -1, player) or
         check_direction(board, r, c, 1, 1, player)
     )
-
 #this function is used to say whether teh player has valid moves or not 
 def has_valid_move(board, player, r=0, c=0):
     if r == 8:
@@ -106,9 +104,7 @@ def count_score(board):
     x = np.sum(board == 'B')
     o = np.sum(board == 'W')
     return x, o
-
 class OT(Game):
-
     def check_win(self,board,player):
         global winner_display,winner
         next_player = self.switch_turn(player,"W","B")
@@ -128,7 +124,6 @@ class OT(Game):
                 return True
         elif not has_valid_move(board, player) and has_valid_move(board,next_player):
             return "skip"
-    
     #this function is used to make the move if the selected cell is valid and flips the opponent cells
     def apply_move(self,board, r, c, player):
         directions = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
@@ -142,23 +137,10 @@ class OT(Game):
             apply_dir(i + 1)
         apply_dir()
         board[r, c] = player
-    
-    def load(self):
-        global loading
-        clock.tick(time)
-        screen.blit(loading_i,(0,0))
-        font = pygame.font.Font(None, 36)
-        dots = "." * (loading % 3 + 1)
-        spaces = " " * (2-loading % 3)
-        loading_text = f"Loading{dots}{spaces} {loading}%"
-        loading_text = font.render(loading_text,True,(255,255,255))
-        screen.blit(loading_text, (200, 550))
-        loading += 1
-    
     def play_game(self):
         username1 = self.username1
         username2 = self.username2
-        global loading,screen  #used to set the time of the loading page
+        global loading,screen,winner_display  #used to set the time of the loading page
         self.screen = pygame.display.get_surface()
         screen = self.screen
         loading = 0
@@ -170,7 +152,8 @@ class OT(Game):
             screen.fill((15,79,34))
             #this is for loading page
             if loading <= 100:
-                self.load()
+                loading = self.load(screen,loading_i,200,550,loading)
+                print(loading)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
                         return 3,username1,username2
@@ -291,5 +274,3 @@ class OT(Game):
         self.board=np.full((8,8),' ')#initializing the board game
         self.board[3,3], self.board[3,4] = 'W', 'B'#initial set up of the game board
         self.board[4,3], self.board[4,4] = 'B', 'W'
-    
-

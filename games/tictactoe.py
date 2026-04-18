@@ -1,11 +1,10 @@
+#tictactoe
 import pygame
 import sys
 import numpy as np
 import os
-
 base_path = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
-
 # pygame.init() #initializing the pygame
 # screen=pygame.display.set_mode((800, 600)) #declaring the size of the screen
 # #loading all the required images
@@ -24,18 +23,14 @@ loadingpic = pygame.transform.scale(loadingpic, (600, 600))
 # username2 = sys.argv[2]
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
-
 from game import Game
 class TTT(Game):
     username1 = None
     username2 = None
-
     def __init__(self,player1,player2):
         super().__init__(player1,player2)
         self.board = np.full((10,10),' ') #declaring the gameboard
         # nonlocal username1
-
-
     def check_win(self,board,player):
         #splicing all horizontal 
         horizontal = (
@@ -80,17 +75,6 @@ class TTT(Game):
             return True,("diag2",np.argwhere(diag2)[0])
         else:
             return False,None
-    def load(self):
-        global loading
-        clock.tick(time)
-        screen.blit(loadingpic,(0,0))
-        font = pygame.font.Font(None, 50)
-        dots = "." * (loading % 3 + 1)
-        spaces = " " * (2 - loading % 3)
-        loading_text = f"Loading{dots}{spaces} {loading}%"
-        text = font.render(loading_text, True, (255, 255, 255))
-        screen.blit(text, (200, 480))
-        loading += 1
     def apply_move(self):
         for i in range(0,600,60):
             for j in range(0,600,60):
@@ -120,7 +104,7 @@ class TTT(Game):
                 self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
             #displaying the loading page
             if loading <= 100:
-                self.load()
+                loading = self.load(screen,loadingpic,200,480,loading)
                 for event in pygame.event.get():
                     #if they press e to exit and the game is declared as draw
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
@@ -235,5 +219,3 @@ class TTT(Game):
                 screen.blit(press_e,(610,192))
             clock.tick(60)
             pygame.display.update()
-        
-                    
