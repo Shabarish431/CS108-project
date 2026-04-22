@@ -18,6 +18,7 @@ li = pygame.image.load(os.path.join(base_path,"ML.png"))
 di = pygame.image.load(os.path.join(base_path,"MD.png"))
 ri = pygame.image.load(os.path.join(base_path,"MR.png"))
 pu = pygame.image.load(os.path.join(base_path,"P.png"))
+epu = pygame.image.load(os.path.join(base_path,"EP.png"))
 nss = pygame.image.load(os.path.join(base_path,"MWS.png"))
 image = nss
 clock = pygame.time.Clock()
@@ -26,7 +27,7 @@ def recording(status,winner,loser,game):
     with open("history.csv",mode='a',newline='') as file:
         writer = csv.writer(file)
         writer.writerow([status,winner,loser,date,game])
-def load_image(screen,image):
+def load_image(screen):
     screen.blit(image,(0,0))
     font = pygame.font.Font(None,35)
     text1 = font.render(username1,True,"white")
@@ -40,7 +41,7 @@ class Game():
         pygame.display.set_caption("Mini Gaming Hub")
         global screen
         screen = self.screen
-        load_image(screen,image)
+        load_image(screen)
     def render_user(self,x, y, title, label, username, color):
         font = pygame.font.Font(None, 36)
         t1 = font.render(title, True, color)
@@ -82,7 +83,8 @@ class Game():
         username1, self.username1 = player1,player1 # first player starts game
         username2, self.username2 = player2,player2
 sortby = 1
-def pop_up(screen):
+def pop_up():
+    screen.fill("black")
     screen.blit(pu,(100,150))
     font = pygame.font.Font(None,35)
     text = font.render(username1,True,"white")
@@ -92,18 +94,31 @@ def leaderboard(sortby):
 def analysis():
     subprocess.Popen(["python3","./analysis.py"])
 def main_menu():
-    global sortby,image,username1,username2,pop,sort_active
-    pop = False
+    global sortby,image,username1,username2,sort_active,pa,gs
     pygame.init() #initializing the pygame
     G = Game(sys.argv[1],sys.argv[2])
     G.init_screen()
+    pa = False
     running = True
     GNS = True
+    gs = True
     p1f = False
     gid = None
+    def end():
+        nonlocal p1f, GNS,gid,running
+        global gs
+        if pa:
+            GNS = True
+            p1f = False
+            gid = None
+            gs = True
+        else:
+            running = False
+            pygame.quit()
+            sys.exit()
     def pg(game,gn):
-        global sortby
-        nonlocal p1f, GNS,gid
+        global sortby,gs
+        nonlocal p1f, GNS,gid,running
         pygame.display.set_caption(gn)
         status, winner, loser = game.play_game()
         if status != 3 : 
@@ -111,15 +126,14 @@ def main_menu():
             leaderboard(sortby)
             analysis()
         G.init_screen()
-        GNS = True
-        p1f = False
-        gid = None
+        screen.blit(epu,(100,150))
+        gs = False
     while running:
         # gid = 2
-        if GNS:
-            load_image(screen,image)
-        if not GNS:
-            pop_up(screen)
+        if GNS and gs:
+            load_image(screen)
+        if not GNS and gs:
+            pop_up()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -127,85 +141,100 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 i,j = pygame.mouse.get_pos()
-                if i in range(540,760) and j in range(37,90) and GNS:
-                    sort_active = not sort_active
-                    print(sort_active)
-                if sort_active == True:
-                    if sortby == 1:
-                        image = wi
-                        load_image(screen,image)
-                        pygame.display.update()
-                    elif sortby == 2:
-                        image = li
-                        load_image(screen,image)
-                        pygame.display.update()
-                    elif sortby == 3:
-                        image = di
-                        load_image(screen,image)
-                        pygame.display.update()
-                    elif sortby == 4:
-                        image = ri
-                        load_image(screen,image)
-                        pygame.display.update()
-                    if i in range(560,741) and GNS:
-                        if j in range(90,140):
-                            sortby = 1
+                if gs:
+                    if not GNS:
+                        screen.fill("black")
+                        clock.tick(30)
+                    if i in range(680,750) and j in range(20,50) and GNS:
+                        running = False
+                        pygame.quit()
+                        sys.exit()
+                    if i in range(540,760) and j in range(70,120) and GNS:
+                        sort_active = not sort_active
+                        print(sort_active)
+                    if sort_active and GNS:
+                        if sortby == 1:
                             image = wi
-                            load_image(screen,image)
+                            load_image(screen)
                             pygame.display.update()
-                        elif j in range(141,190):
-                            sortby = 2
+                        elif sortby == 2:
                             image = li
-                            load_image(screen,image)
+                            load_image(screen)
                             pygame.display.update()
-                        elif j in range(191,240):
-                            sortby = 3
+                        elif sortby == 3:
                             image = di
-                            load_image(screen,image)
+                            load_image(screen)
                             pygame.display.update()
-                        elif j in range(241,290):
-                            sortby = 4
+                        elif sortby == 4:
                             image = ri
-                            load_image(screen,image)
+                            load_image(screen)
                             pygame.display.update()
-                if sort_active == False and GNS:
-                    image = nss
-                    load_image(screen,image)
-                    pygame.display.update()
-                if i in range(50,450) and GNS:
-                    if j in range(160,260):
-                        GNS = False
-                        gid = 3
-                        pop_up(screen)
-                    elif j in range(300,400):
-                        GNS = False
-                        pop_up(screen)
-                        gid = 1
-                    elif j in range(440,540):
-                        GNS = False
-                        pop_up(screen)
-                        gid = 2
-                elif j in range(350,400) and not p1f:
-                    if i in range(200,300):
-                        p1f = True
-                    elif i in range(500,600):
-                        username1,username2 = username2,username1
-                        p1f = True
-                if i in range(540,760) and GNS:
-                    if j in range(350,450):
-                        print(sortby)
-                        leaderboard(sortby)
-                    if j in range(480,580):
-                        analysis()
-        if gid==2 and p1f:
+                        if i in range(560,741) and GNS:
+                            if j in range(120,170):
+                                sortby = 1
+                                image = wi
+                                load_image(screen)
+                                pygame.display.update()
+                            elif j in range(171,220):
+                                sortby = 2
+                                image = li
+                                load_image(screen)
+                                pygame.display.update()
+                            elif j in range(221,270):
+                                sortby = 3
+                                image = di
+                                load_image(screen)
+                                pygame.display.update()
+                            elif j in range(271,320):
+                                sortby = 4
+                                image = ri
+                                load_image(screen)
+                                pygame.display.update()
+                    if sort_active == False and GNS:
+                        image = nss
+                        load_image(screen)
+                        pygame.display.update()
+                    if i in range(50,450) and GNS:
+                        if j in range(160,260):
+                            GNS = False
+                            gid = 3
+                            pop_up()
+                        elif j in range(300,400):
+                            GNS = False
+                            pop_up()
+                            gid = 1
+                        elif j in range(440,540):
+                            GNS = False
+                            pop_up()
+                            gid = 2
+                    elif j in range(350,400) and (not p1f) and (not GNS) :
+                        if i in range(200,300):
+                            p1f = True
+                        elif i in range(500,600):
+                            username1,username2 = username2,username1
+                            p1f = True
+                    if i in range(540,760) and GNS:
+                        if j in range(350,450):
+                            leaderboard(sortby)
+                        if j in range(480,580):
+                            analysis()
+                else:
+                    if j in range(350,400):
+                        if i in range(200,300):
+                            pa = False
+                            end()
+                        elif i in range(500,600):
+                            pa = True
+                            end()
+        if gid==2 and p1f and gs:
             from games.tictactoe import TTT
             tictactoe = TTT(username1,username2)
             pg(tictactoe,"TIC-TAC-TOE")
-        elif gid == 1 and p1f:
+        elif gid == 1 and p1f and gs:
             from games.othello import OT
             othello = OT(username1,username2)
             pg(othello,"OTHELLO")
-        elif gid == 3 and p1f:
+        elif gid == 3 and p1f and gs:
             from games.connect4 import CO
             connect4 = CO(username1,username2)
             pg(connect4,"CONNECT4")
