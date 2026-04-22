@@ -151,7 +151,6 @@ def main_menu():
                         sys.exit()
                     if i in range(540,760) and j in range(70,120) and GNS:
                         sort_active = not sort_active
-                        print(sort_active)
                     if sort_active and GNS:
                         if sortby == 1:
                             image = wi
