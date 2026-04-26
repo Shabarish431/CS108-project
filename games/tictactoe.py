@@ -16,6 +16,7 @@ withx = pygame.image.load(os.path.join(base_path, "withX.png"))
 withx = pygame.transform.scale(withx, (60, 60))
 witho = pygame.image.load(os.path.join(base_path, "withO.png"))
 witho = pygame.transform.scale(witho, (60, 60))
+quit = pygame.image.load(os.path.join(base_path, "quit.png"))
 loadingpic = pygame.image.load(os.path.join(base_path, "tictactoev2.png"))
 loadingpic = pygame.transform.scale(loadingpic, (600, 600))
 #declaring the players
@@ -107,8 +108,12 @@ class TTT(Game):
                 loading = self.load(screen,loadingpic,200,480,loading)
                 for event in pygame.event.get():
                     #if they press e to exit and the game is declared as draw
-                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
+                    if event.type == pygame.QUIT:
                         return 3,username1,username2
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x,y=pygame.mouse.get_pos()
+                        if 650 <= x <= 750 and 450 <= y <= 500:
+                            return 3,username1,username2
             else:
                 #screening the game page
                 #displaying the game board
@@ -118,29 +123,71 @@ class TTT(Game):
                         x,y=pygame.mouse.get_pos()
                         if message_timer > 0:
                             continue
-                        if self.board[y//60][x//60] == ' ' and winner == ' ':
-                            self.board[y//60][x//60] = player
-                            won, info = self.check_win(self.board, player)
-                            count += 1
-                            if won:
-                                winner = player
-                                win_type, (r,c) = info
-                            player = self.switch_turn(player,'X','O')
-                        elif self.board[y//60][x//60] != ' ' and winner == ' ':
-                            message_display = "Cell Occupied!"
-                            message_timer = 30
+                        if 0 <= x < 600 and 0 <= y < 600:
+                            if self.board[y//60][x//60] == ' ' and winner == ' ':
+                                self.board[y//60][x//60] = player
+                                won, info = self.check_win(self.board, player)
+                                count += 1
+                                if won:
+                                    winner = player
+                                    win_type, (r,c) = info
+                                player = self.switch_turn(player,'X','O')
+                            elif self.board[y//60][x//60] != ' ' and winner == ' ':
+                                message_display = "Cell Occupied!"
+                                message_timer = 30
+                        else:
+                            if 650 <= x <= 750 and 450 <= y <= 500 and winner == ' ':
+                                if player == 'X' and winner == ' ':
+                                    winner = 'O'
+                                    small = pygame.transform.smoothscale(screen,(150,150))
+                                    blurred = pygame.transform.smoothscale(small,(800,600))
+                                    screen.blit(blurred,(0,0))
+                                    overlay = pygame.Surface((800,600))
+                                    overlay.set_alpha(75)
+                                    overlay.fill((0,0,0))
+                                    screen.blit(overlay,(0,0))
+                                    font = pygame.font.Font(None, 50)
+                                    winner_display = f"{username2} Wins!"
+                                    text = font.render(winner_display, True, ((255,0,0)))
+                                    screen.blit(text, (190, 500))
+                                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
+                                    self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                                    pygame.display.update()
+                                    clock.tick(1)
+                                    return 1,username2,username1
+                                elif player == 'O' and winner == ' ':
+                                    winner = 'X'
+                                    small = pygame.transform.smoothscale(screen,(150,150))
+                                    blurred = pygame.transform.smoothscale(small,(800,600))
+                                    screen.blit(blurred,(0,0))
+                                    overlay = pygame.Surface((800,600))
+                                    overlay.set_alpha(75)
+                                    overlay.fill((0,0,0))
+                                    screen.blit(overlay,(0,0))
+                                    font = pygame.font.Font(None, 50)
+                                    winner_display = f"{username1} Wins!"
+                                    text = font.render(winner_display, True, ((255,0,0)))
+                                    screen.blit(text, (190, 500))
+                                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
+                                    self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                                    pygame.display.update()
+                                    clock.tick(1)
+                                    return 1,username1,username2
                     #pressing e to exit the game and declaring the result of the game
-                    if event.type==pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e):
+                    if event.type==pygame.QUIT:
                         if player == 'X' and winner == ' ':
                             winner = 'O'
+                            small = pygame.transform.smoothscale(screen,(150,150))
+                            blurred = pygame.transform.smoothscale(small,(800,600))
+                            screen.blit(blurred,(0,0))
                             overlay = pygame.Surface((800,600))
                             overlay.set_alpha(75)
                             overlay.fill((0,0,0))
                             screen.blit(overlay,(0,0))
-                            font = pygame.font.Font(None, 200)
-                            winner_display = "O Wins!"
-                            text = font.render(winner_display, True, (255,255,255))
-                            screen.blit(text, (50, 250))
+                            font = pygame.font.Font(None, 50)
+                            winner_display = f"{username2} Wins!"
+                            text = font.render(winner_display, True, ((255,0,0)))
+                            screen.blit(text, (190, 500))
                             self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
                             self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
                             pygame.display.update()
@@ -148,14 +195,17 @@ class TTT(Game):
                             return 1,username2,username1
                         elif player == 'O' and winner == ' ':
                             winner = 'X'
+                            small = pygame.transform.smoothscale(screen,(150,150))
+                            blurred = pygame.transform.smoothscale(small,(800,600))
+                            screen.blit(blurred,(0,0))
                             overlay = pygame.Surface((800,600))
                             overlay.set_alpha(75)
                             overlay.fill((0,0,0))
                             screen.blit(overlay,(0,0))
-                            font = pygame.font.Font(None, 200)
-                            winner_display = "X wins!"
-                            text = font.render(winner_display, True, (255,255,255))
-                            screen.blit(text, (50, 250))
+                            font = pygame.font.Font(None, 50)
+                            winner_display = f"{username1} Wins!"
+                            text = font.render(winner_display, True, ((255,0,0)))
+                            screen.blit(text, (190, 500))
                             self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
                             self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
                             pygame.display.update()
@@ -190,12 +240,14 @@ class TTT(Game):
                     overlay.set_alpha(75)
                     overlay.fill((0,0,0))
                     screen.blit(overlay,(0,0))
-                    font = pygame.font.Font(None,200)
-                    if winner == 'O' or winner == 'X':
-                        text = font.render(f"{winner} Wins!",True,(255,255,255))
+                    font = pygame.font.Font(None,50)
+                    if winner == 'O':
+                        text = font.render(f"{username2} Wins!",True,((255,0,0)))
+                    elif winner == 'X':
+                        text = font.render(f"{username1} Wins!",True,((255,0,0)))
                     elif count == 100:
-                        text = font.render(f"It's Draw",True,(255,255,255))
-                    screen.blit(text,(50,250))
+                        text = font.render(f"It's Draw",True,((255,0,0)))
+                    screen.blit(text,(190,500))
                     pygame.display.update()
                     clock.tick(0.5)
                     if winner == 'X':
@@ -205,17 +257,15 @@ class TTT(Game):
                     elif count == 100:
                         return 2,username1,username2
                 if message_display != " " and message_timer > 0:
-                    font = pygame.font.Font(None, 36)
+                    font = pygame.font.Font(None, 50)
                     text = font.render(message_display, True, (255, 0, 0))
-                    screen.blit(text, (200, 550))
+                    screen.blit(text, (190, 500))
                     message_timer -= 1
                     if message_timer == 0:
                         message_display = " "
             #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             font=pygame.font.Font(None,36)
             if winner == ' ':
-                press_e = "Press E to exit."
-                press_e = font.render(press_e,True,(200,200,200))
-                screen.blit(press_e,(610,192))
+                screen.blit(quit,(650,450))
             clock.tick(60)
             pygame.display.update()

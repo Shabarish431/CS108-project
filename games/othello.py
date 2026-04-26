@@ -22,6 +22,8 @@ loading_i = pygame.image.load(os.path.join(base_path, "othelloloading.png"))
 loading_i = pygame.transform.scale(loading_i, (600, 600))
 valid = pygame.image.load(os.path.join(base_path,"othellovalid.png"))
 valid = pygame.transform.scale(valid, (75,75))
+quit = pygame.image.load(os.path.join(base_path,"quit.png"))
+quit = pygame.transform.scale(quit, (100, 50))
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
 #this function is used to declare whether teh opponent is on that direction
@@ -106,7 +108,7 @@ def count_score(board):
     return x, o
 class OT(Game):
     def check_win(self,board,player):
-        global winner_display,winner
+        global winner_display,winner,username1,username2
         next_player = self.switch_turn(player,"W","B")
         if not has_valid_move(board,player) and not has_valid_move(board,next_player):
             x, o = count_score(board)
@@ -115,11 +117,11 @@ class OT(Game):
                 winner = "Draw"
                 return True
             elif x>o :
-                winner_display="player B is winner"
+                winner_display=f"{username1} is winner"
                 winner = "B"
                 return True
             elif o>x :
-                winner_display="player W is winner"
+                winner_display=f"{username2} is winner"
                 winner = "W"
                 return True
         elif not has_valid_move(board, player) and has_valid_move(board,next_player):
@@ -154,8 +156,12 @@ class OT(Game):
             if loading <= 100:
                 loading = self.load(screen,loading_i,200,550,loading)
                 for event in pygame.event.get():
-                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e) and loading <=100 :
+                    if event.type == pygame.QUIT  and loading <=100 :
                         return 3,username1,username2
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x,y=pygame.mouse.get_pos()
+                        if 650 <= x <= 750 and 450 <= y <= 500 and loading <=100:
+                            return 3,username1,username2
             else:
                 #game screen displayig 
                 #game board display
@@ -183,7 +189,7 @@ class OT(Game):
                     overlay.set_alpha(75)
                     overlay.fill((0,0,0))
                     screen.blit(overlay,(0,0))
-                    font = pygame.font.Font(None, 36)
+                    font = pygame.font.Font((None,50))
                     text = font.render(winner_display, True, (255, 0, 0))
                     screen.blit(text, (190, 500))
                     pygame.display.update()
@@ -215,15 +221,41 @@ class OT(Game):
                             else:
                                 self.apply_move(board, x//75, y//75, player)
                                 player = self.switch_turn(player,"W","B")
-                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_e): #to decalre the opponent as winner if teh current player exits before game is completed
+                        elif 650 <= x <= 750 and 450 <= y <= 500:
+                            if winner == ' ':
+                                if player == 'B':
+                                    overlay = pygame.Surface((800,600))
+                                    overlay.set_alpha(75)
+                                    overlay.fill((0,0,0))
+                                    screen.blit(overlay,(0,0))
+                                    font = pygame.font.Font((None,50))
+                                    winner_display = f"{username2} is winner"
+                                    text = font.render(winner_display, True, (255, 0, 0))
+                                    screen.blit(text, (190, 500))
+                                    pygame.display.update()
+                                    clock.tick(1)
+                                    return 1,username2,username1
+                                if player == 'W':
+                                    overlay = pygame.Surface((800,600))
+                                    overlay.set_alpha(75)
+                                    overlay.fill((0,0,0))
+                                    screen.blit(overlay,(0,0))
+                                    font = pygame.font.Font((None,50))
+                                    winner_display = f"{username1} is winner"
+                                    text = font.render(winner_display, True, (255, 0, 0))
+                                    screen.blit(text, (190, 500))
+                                    pygame.display.update()
+                                    clock.tick(1)
+                                    return 1,username1,username2
+                    if event.type == pygame.QUIT: #to decalre the opponent as winner if teh current player exits before game is completed
                         if winner == ' ':
                             if player == 'B':
                                 overlay = pygame.Surface((800,600))
                                 overlay.set_alpha(75)
                                 overlay.fill((0,0,0))
                                 screen.blit(overlay,(0,0))
-                                font = pygame.font.Font(None, 36)
-                                winner_display = "player W is winner"
+                                font = pygame.font.Font((None,50))
+                                winner_display = f"{username2} is winner"
                                 text = font.render(winner_display, True, (255, 0, 0))
                                 screen.blit(text, (190, 500))
                                 pygame.display.update()
@@ -234,15 +266,15 @@ class OT(Game):
                                 overlay.set_alpha(75)
                                 overlay.fill((0,0,0))
                                 screen.blit(overlay,(0,0))
-                                font = pygame.font.Font(None, 36)
-                                winner_display = "player B is winner"
+                                font = pygame.font.Font((None,50))
+                                winner_display = f"{username1} is winner"
                                 text = font.render(winner_display, True, (255, 0, 0))
                                 screen.blit(text, (190, 500))
                                 pygame.display.update()
                                 clock.tick(1)
                                 return 1,username1,username2
                 if message_display != " " and message_timer > 0: #used to display the message if the selected cell is invalid or occupied
-                    font = pygame.font.Font(None, 36)
+                    font = pygame.font.Font((None,50))
                     text = font.render(message_display, True, (255, 0, 0))
                     if message_display == "Cell Occupied!" or message_display == "Invalid Move!":
                         screen.blit(text, (200, 550))
@@ -256,15 +288,14 @@ class OT(Game):
             self.render_user(610, 10, "Username Of", "Player B:", username1, (255,255,255))
             self.render_user(610, 101, "Username Of", "Player W:", username2, (255,255,255))
             #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
-            if winner == ' ':
-                press_e = "Press E to exit."
-                press_e = font.render(press_e,True,(200,200,200))
-                screen.blit(press_e,(610,192))
-                font = pygame.font.Font(None,28)
-                show_valid = ["The cells which","are in brighter green","are valid moves of","current player"]
-                for i in range(4):
-                    show_valid[i] = font.render(show_valid[i],True,(200,200,200))
-                    screen.blit(show_valid[i],(605,230+(i*25)))
+            if winner == ' ' :
+                screen.blit(quit,(650,450))
+                if loading > 100:    
+                    font = pygame.font.Font(None,28)
+                    show_valid = ["The cells which","are in brighter green","are valid moves of","current player"]
+                    for i in range(4):
+                        show_valid[i] = font.render(show_valid[i],True,(200,200,200))
+                        screen.blit(show_valid[i],(605,230+(i*25)))
             clock.tick(60)
             pygame.display.update()
 
