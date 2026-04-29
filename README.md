@@ -1,34 +1,12 @@
 # CS108-project
 A Mini Game Hub containing connect4,othello(reversi),tic-tac-toe
 
-proposed features:
+How to run the project:
 
-1. can register any number of users with strong hashing security
-2. 2 Players play 3 games with GUI specific to each game
-3. while playing the game user may choose to quit (user quitting depends upon the which player's turn it was) leading to the other player win
-4. return to the main menu while not storing any information about the game left midway(i.e winner or loser is not determined and not included in the leaderboard information)
-5. you can quit from the playing completely if you press the quit in main menu terminating the game loop
-6. can view the leaderboard at any time apart from the time while playing
-
-Initial implementation plan:
-
-1.File named main.sh which is used to authenticate users, for registration and also logging in , stores the usernames and corresponding passwords after hashing them using SHA-256 in 'users.tsv' file.
-  i.This script after authenticating calls the game.py and sends the 2 participating usernames to it.
-
-2.game.py contains the class which contains the common aspects of the 3 games(ex:- player names, player's turn deciding function, overridable check-win method, quitting method, return to main menu(without saving the results) method, restart method).
-  1.This contain a loop that runs as long as the players want to play and terminate cleanly if the players want to stop playing
-  2.This contain the GUI of 'sort by' option to view leaderboard
-  3.This contain the menu GUI to choose the game to play
-  4.After choosing the game to play it sends the usernames to the chosen game.py(ex: connect4.py) present in the 'games' folder (after terminating the GUI of menu)
-  5.After the completion of the game it gives the results of the game and the history.csv is updated accordingly (by the date, winner, loser, game name, etc)
-  6.After updating the history.csv leaderboard.sh is called by specifying the metric to sort the content
-  7.After the results are displayed in the terminal, this show the matplotlib charts (A bar chart of the Top 5 Players by total win count, A pie chart of the Most Played Games by frequency in history.csv, A graph of the top player containing no of games played plotted against date for all three games, etc)
-  8.After this a prompt appears on the screen to let the player choose to quit or continue playing. Depending upon the input, loop stops or keep running
-
-3.leaderboard.sh goes through the history.csv and calculates few metrics (per game, per user: number of wins, number of losses, and Win/Loss ratio, etc) and sorts the results by the given argument from the game.py then displays the result in the terminal.
-
-4.games contain 3 files (games) connect4.py, othello.py, tictactoe.py 
-  each one of these files import the class which is in common to these 3 and override the check-win method and contain their own methods to play effectively and efficiently
-  1.This contain the game specific GUI
-  2.After the completion (it uses the check-win method to determine if the game is draw or won by someone) this sends the appropriate results to the game.py after terminating the GUI of the game.
-  3.Menu GUI appears again(managed by game.py)
+1. First download all the files in our git repository by cloning.
+2. Run "bash main.sh" in terminal. It will ask you to register or login. You need two players to play(either by logging in or registering).
+3. After logging in succesfully. game.py with the usernames of logged in players will run automatically.
+4. On the screen you can see many options to select game or getting leaderboard(you can select to sort by by clicking on sort by option to view the menu. By default it is sorted by wins.) or getting analytics(shows the charts and bar graph).
+5. You can exit the gaming hub (exit option in the main-menu), while loading the game quiting brings you back to the main-menu
+6. You can quit the game if you want to in the middle of the game but your opponent will be declared as winner.
+7. You will be asked to continue playing or want to close the gaming hub everytime after finishing each game.

@@ -196,13 +196,7 @@ class TTT(Game):
                             clock.tick(1)
                             return 1,username1,username2
                 if winner != ' ' or count == 100:
-                    font=pygame.font.Font(None,36)
-                    screen.blit(withx,(662.5,30))
-                    userename1_display = font.render(username1,True,(255,255,255))
-                    screen.blit(userename1_display,(662.5,100))
-                    screen.blit(witho,(662.5,141))
-                    username2_display = font.render(username2,True,(255,255,255))
-                    screen.blit(username2_display,(662.5,210))
+                    self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
                     if winner == 'O' or winner == 'X':
                         cell = 60
                         if win_type == "horizontal":

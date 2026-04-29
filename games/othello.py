@@ -135,9 +135,9 @@ class OT(Game):
         apply_dir()
         board[r, c] = player
     def play_game(self):
+        global loading,screen,winner_display,username1,username2  #used to set the time of the loading page
         username1 = self.username1
         username2 = self.username2
-        global loading,screen,winner_display  #used to set the time of the loading page
         self.screen = pygame.display.get_surface()
         screen = self.screen
         loading = 0
