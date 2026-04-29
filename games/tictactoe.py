@@ -100,9 +100,7 @@ class TTT(Game):
         username2 = self.username2
         while True:
             screen.fill((7,71,80))
-            if winner == ' ':
-                self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
+            self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
             #displaying the loading page
             if loading <= 100:
                 loading = self.load(screen,loadingpic,200,480,loading)
@@ -150,8 +148,7 @@ class TTT(Game):
                                     winner_display = f"{username2} Wins!"
                                     text = font.render(winner_display, True, ((255,0,0)))
                                     screen.blit(text, (190, 500))
-                                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                                    self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                                    self.render_user(662.5, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
                                     pygame.display.update()
                                     clock.tick(1)
                                     return 1,username2,username1
@@ -168,8 +165,7 @@ class TTT(Game):
                                     winner_display = f"{username1} Wins!"
                                     text = font.render(winner_display, True, ((255,0,0)))
                                     screen.blit(text, (190, 500))
-                                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                                    self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                                    self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
                                     pygame.display.update()
                                     clock.tick(1)
                                     return 1,username1,username2
@@ -188,8 +184,7 @@ class TTT(Game):
                             winner_display = f"{username2} Wins!"
                             text = font.render(winner_display, True, ((255,0,0)))
                             screen.blit(text, (190, 500))
-                            self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                            self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                            self.render_user(662.5, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
                             pygame.display.update()
                             clock.tick(1)
                             return 1,username2,username1
@@ -206,14 +201,18 @@ class TTT(Game):
                             winner_display = f"{username1} Wins!"
                             text = font.render(winner_display, True, ((255,0,0)))
                             screen.blit(text, (190, 500))
-                            self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                            self.render_user(610, 101,"username of", "player O:", username2, (255,255,255))
+                            self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
                             pygame.display.update()
                             clock.tick(1)
                             return 1,username1,username2
                 if winner != ' ' or count == 100:
-                    self.render_user(610, 10, "Username Of", "Player X:", username1, (255,255,255))
-                    self.render_user(610, 101, "Username Of", "Player O:", username2, (255,255,255))
+                    font=pygame.font.Font(None,36)
+                    screen.blit(withx,(662.5,30))
+                    userename1_display = font.render(username1,True,(255,255,255))
+                    screen.blit(userename1_display,(662.5,100))
+                    screen.blit(witho,(662.5,141))
+                    username2_display = font.render(username2,True,(255,255,255))
+                    screen.blit(username2_display,(662.5,210))
                     if winner == 'O' or winner == 'X':
                         cell = 60
                         if win_type == "horizontal":
@@ -263,6 +262,8 @@ class TTT(Game):
                     message_timer -= 1
                     if message_timer == 0:
                         message_display = " "
+            if winner == ' ':
+                self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
             #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             font=pygame.font.Font(None,36)
             if winner == ' ':

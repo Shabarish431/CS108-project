@@ -42,18 +42,14 @@ class Game():
         global screen
         screen = self.screen
         load_image(screen)
-    def render_user(self,x, y, title, label, username, color):
-        font = pygame.font.Font(None, 36)
-        t1 = font.render(title, True, color)
-        t2 = font.render(label, True, color)
-        if len(username) > 13:
-            username1 = username[:11] + "..."
-        else :
-            username1 = username
-        t3 = font.render(username1, True, color)
-        self.screen.blit(t1, (x, y))
-        self.screen.blit(t2, (x, y + 27))
-        self.screen.blit(t3, (x, y + 54))
+    def render_user(self,x1, y1, y2, y3, y4, username1, username2, color, u1i, u2i, screen):
+        font=pygame.font.Font(None,36)
+        screen.blit(u1i,(x1,y1))
+        userename1_display = font.render(username1,True,color)
+        screen.blit(userename1_display,(x1,y2))
+        screen.blit(u2i,(x1,y3))
+        username2_display = font.render(username2,True,color)
+        screen.blit(username2_display,(x1,y4))
     def switch_turn(self,player,a,b):
         return b if player == a else a
     def check_win(self,board,player):

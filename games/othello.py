@@ -183,13 +183,12 @@ class OT(Game):
                         board[i[0]][i[1]] = ' '
                 result = self.check_win(board, player)
                 if result == True :
-                    self.render_user(610, 10, "Username Of", "Player B:", username1, (255,255,255))
-                    self.render_user(610, 101, "Username Of", "Player W:", username2, (255,255,255))
+                    self.render_user(610, 10, 100, 131, 220, username1, username2, (255,255,255), black, white, screen)
                     overlay = pygame.Surface((800,600))
                     overlay.set_alpha(75)
                     overlay.fill((0,0,0))
                     screen.blit(overlay,(0,0))
-                    font = pygame.font.Font((None,50))
+                    font = pygame.font.Font(None,50)
                     text = font.render(winner_display, True, (255, 0, 0))
                     screen.blit(text, (190, 500))
                     pygame.display.update()
@@ -228,7 +227,7 @@ class OT(Game):
                                     overlay.set_alpha(75)
                                     overlay.fill((0,0,0))
                                     screen.blit(overlay,(0,0))
-                                    font = pygame.font.Font((None,50))
+                                    font = pygame.font.Font(None,50)
                                     winner_display = f"{username2} is winner"
                                     text = font.render(winner_display, True, (255, 0, 0))
                                     screen.blit(text, (190, 500))
@@ -240,7 +239,7 @@ class OT(Game):
                                     overlay.set_alpha(75)
                                     overlay.fill((0,0,0))
                                     screen.blit(overlay,(0,0))
-                                    font = pygame.font.Font((None,50))
+                                    font = pygame.font.Font(None,50)
                                     winner_display = f"{username1} is winner"
                                     text = font.render(winner_display, True, (255, 0, 0))
                                     screen.blit(text, (190, 500))
@@ -254,7 +253,7 @@ class OT(Game):
                                 overlay.set_alpha(75)
                                 overlay.fill((0,0,0))
                                 screen.blit(overlay,(0,0))
-                                font = pygame.font.Font((None,50))
+                                font = pygame.font.Font(None,50)
                                 winner_display = f"{username2} is winner"
                                 text = font.render(winner_display, True, (255, 0, 0))
                                 screen.blit(text, (190, 500))
@@ -266,7 +265,7 @@ class OT(Game):
                                 overlay.set_alpha(75)
                                 overlay.fill((0,0,0))
                                 screen.blit(overlay,(0,0))
-                                font = pygame.font.Font((None,50))
+                                font = pygame.font.Font(None,50)
                                 winner_display = f"{username1} is winner"
                                 text = font.render(winner_display, True, (255, 0, 0))
                                 screen.blit(text, (190, 500))
@@ -274,7 +273,7 @@ class OT(Game):
                                 clock.tick(1)
                                 return 1,username1,username2
                 if message_display != " " and message_timer > 0: #used to display the message if the selected cell is invalid or occupied
-                    font = pygame.font.Font((None,50))
+                    font = pygame.font.Font(None,50)
                     text = font.render(message_display, True, (255, 0, 0))
                     if message_display == "Cell Occupied!" or message_display == "Invalid Move!":
                         screen.blit(text, (200, 550))
@@ -284,9 +283,7 @@ class OT(Game):
                     if message_timer == 0:
                         message_display = " "
             #displaying the usernames of the players
-            font=pygame.font.Font(None,36)
-            self.render_user(610, 10, "Username Of", "Player B:", username1, (255,255,255))
-            self.render_user(610, 101, "Username Of", "Player W:", username2, (255,255,255))
+            self.render_user(610, 10, 100, 131, 220, username1, username2, (255,255,255), black, white, screen)
             #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             if winner == ' ' :
                 screen.blit(quit,(650,450))
@@ -295,7 +292,7 @@ class OT(Game):
                     show_valid = ["The cells which","are in brighter green","are valid moves of","current player"]
                     for i in range(4):
                         show_valid[i] = font.render(show_valid[i],True,(200,200,200))
-                        screen.blit(show_valid[i],(605,230+(i*25)))
+                        screen.blit(show_valid[i],(605,245+(i*25)))
             clock.tick(60)
             pygame.display.update()
 
