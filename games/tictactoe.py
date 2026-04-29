@@ -5,10 +5,6 @@ import numpy as np
 import os
 base_path = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
-# pygame.init() #initializing the pygame
-# screen=pygame.display.set_mode((800, 600)) #declaring the size of the screen
-# #loading all the required images
-# pygame.display.set_caption("TIC TAC TOE")
 empty = pygame.image.load(os.path.join(base_path, "empty.png"))
 empty = pygame.transform.scale(empty, (60, 60))
 withx = pygame.image.load(os.path.join(base_path, "withX.png"))
@@ -18,9 +14,6 @@ witho = pygame.transform.scale(witho, (60, 60))
 quit = pygame.image.load(os.path.join(base_path, "quit.png"))
 loadingpic = pygame.image.load(os.path.join(base_path, "tictactoev2.png"))
 loadingpic = pygame.transform.scale(loadingpic, (600, 600))
-#declaring the players
-# username1 = sys.argv[1]
-# username2 = sys.argv[2]
 clock = pygame.time.Clock()
 time = np.random.randint(15,20)
 from game import Game
@@ -30,7 +23,6 @@ class TTT(Game):
     def __init__(self,player1,player2):
         super().__init__(player1,player2)
         self.board = np.full((10,10),' ') #declaring the gameboard
-        # nonlocal username1
     def check_win(self,board,player):
         #splicing all horizontal 
         horizontal = (
@@ -167,7 +159,7 @@ class TTT(Game):
                                     pygame.display.update()
                                     clock.tick(1)
                                     return 1,username1,username2
-                    #pressing e to exit the game and declaring the result of the game
+                    #pressing quit button to exit the game and declaring the result of the game
                     if event.type==pygame.QUIT:
                         if player == 'X' and winner == ' ':
                             winner = 'O'
@@ -262,7 +254,7 @@ class TTT(Game):
                         message_display = " "
             if winner == ' ':
                 self.render_user(610, 30, 100, 141, 210, username1, username2, (255,255,255), withx, witho, screen)
-            #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
+            #when the winner is declared the text to pressing quit button to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             font=pygame.font.Font(None,36)
             if winner == ' ':
                 screen.blit(quit,(650,450))

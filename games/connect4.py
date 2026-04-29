@@ -3,12 +3,6 @@ import pygame
 import sys
 import numpy as np
 import os
-#declaring the players
-# username1 = sys.argv[1]
-# username2 = sys.argv[2] 
-# pygame.init() #initializing the pygame
-# screen = pygame.display.set_mode((900, 700)) #declaring the size of the screen
-# pygame.display.set_caption("CONNECT4") 
 #loading all the required images
 base_path = os.path.dirname(__file__)
 empty = pygame.transform.scale(pygame.image.load(os.path.join(base_path, "conempty.png")), (100, 100))
@@ -227,7 +221,7 @@ class CO(Game):
                         return 2,username1,username2
             #displaying the usernames of the players
             self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
-            #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
+            #when the winner is declared the text to pressing quit button to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             if winner == ' ':
                 screen.blit(quit,(750,550))
             clock.tick(60)

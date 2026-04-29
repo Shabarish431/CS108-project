@@ -3,11 +3,6 @@ import sys
 import pygame
 import numpy as np
 import os
-# pygame.init()
-# screen=pygame.display.set_mode((800, 600))#settign the screen size
-# pygame.display.set_caption("OTHELLO")
-# username1 = sys.argv[1]#decalringm the players
-# username2 = sys.argv[2]
 winner_display = ' ' #to dispay at the end of the game
 winner = ' ' #who is the winner
 #declared all the images needed
@@ -92,7 +87,7 @@ def is_valid_move(board, r, c, player):
         check_direction(board, r, c, 1, -1, player) or
         check_direction(board, r, c, 1, 1, player)
     )
-#this function is used to say whether teh player has valid moves or not 
+#this function is used to say whether the player has valid moves or not 
 def has_valid_move(board, player, r=0, c=0):
     if r == 8:
         return False
@@ -284,7 +279,7 @@ class OT(Game):
                         message_display = " "
             #displaying the usernames of the players
             self.render_user(610, 10, 100, 131, 220, username1, username2, (255,255,255), black, white, screen)
-            #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
+            #when the winner is declared the text to pressing quit button to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             if winner == ' ' :
                 screen.blit(quit,(650,450))
                 if loading > 100:    
