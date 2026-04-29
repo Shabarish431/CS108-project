@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath(os.path.join(base_path,"..")))
 # #loading all the required images
 # pygame.display.set_caption("TIC TAC TOE")
 empty = pygame.image.load(os.path.join(base_path, "empty.png"))
-print(os.path.join(base_path, "empty.png"))
 empty = pygame.transform.scale(empty, (60, 60))
 withx = pygame.image.load(os.path.join(base_path, "withX.png"))
 withx = pygame.transform.scale(withx, (60, 60))
@@ -104,8 +103,7 @@ class TTT(Game):
             #displaying the loading page
             if loading <= 100:
                 loading = self.load(screen,loadingpic,200,480,loading)
-                for event in pygame.event.get():
-                    #if they press e to exit and the game is declared as draw
+                for event in pygame.event.get(): # if quit button on loading screen is selected
                     if event.type == pygame.QUIT:
                         return 3,username1,username2
                     if event.type == pygame.MOUSEBUTTONDOWN:

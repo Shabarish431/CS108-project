@@ -155,7 +155,7 @@ class OT(Game):
             #this is for loading page
             if loading <= 100:
                 loading = self.load(screen,loading_i,200,550,loading)
-                for event in pygame.event.get():
+                for event in pygame.event.get(): # if quit button on loading screen is selected
                     if event.type == pygame.QUIT  and loading <=100 :
                         return 3,username1,username2
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -246,7 +246,7 @@ class OT(Game):
                                     pygame.display.update()
                                     clock.tick(1)
                                     return 1,username1,username2
-                    if event.type == pygame.QUIT: #to decalre the opponent as winner if teh current player exits before game is completed
+                    if event.type == pygame.QUIT: #to declare the opponent as winner if teh current player exits before game is completed
                         if winner == ' ':
                             if player == 'B':
                                 overlay = pygame.Surface((800,600))

@@ -91,7 +91,7 @@ class CO(Game):
             #display loading page
             if loading <= 100:
                 loading = self.load(screen,loadingpic,330,530,loading)
-                for event in pygame.event.get():
+                for event in pygame.event.get(): # if quit button on loading screen is selected
                     if event.type == pygame.QUIT :
                         return 3,username1,username2
                     if event.type == pygame.MOUSEBUTTONDOWN:
