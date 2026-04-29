@@ -9,11 +9,11 @@ with open("history.csv",mode='r') as file:
     
     for row in reader:
         if row[0]=="1":
-            if row[1] in players:
+            if row[1] in players: # to count no of wins for each player
                 players[row[1]] += 1
             else:
                 players[row[1]] = 1
-        if row[4]=="OTHELLO": games[0]+=1
+        if row[4]=="OTHELLO": games[0]+=1 # to count no of games played in the total playing history of this gaming hub
         if row[4]=="TIC-TAC-TOE": games[1]+=1
         if row[4]=="CONNECT4": games[2]+=1
 

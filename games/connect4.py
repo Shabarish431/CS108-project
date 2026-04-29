@@ -91,7 +91,7 @@ class CO(Game):
             #display loading page
             if loading <= 100:
                 loading = self.load(screen,loadingpic,330,530,loading)
-                for event in pygame.event.get():
+                for event in pygame.event.get(): # if quit button on loading screen is selected
                     if event.type == pygame.QUIT :
                         return 3,username1,username2
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -130,8 +130,7 @@ class CO(Game):
                             winner_display = f"{username2} Wins!"
                             text = font.render(winner_display, True, ((255,0,0)))
                             screen.blit(text, (190, 500))
-                            self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-                            self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
+                            self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
                             pygame.display.update()
                             clock.tick(1)
                             return 1,username2,username1
@@ -145,8 +144,6 @@ class CO(Game):
                             winner_display = f"{username1} Wins!"
                             text = font.render(winner_display, True, ((255,0,0)))
                             screen.blit(text, (190, 500))
-                            self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-                            self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
                             pygame.display.update()
                             clock.tick(1)
                             return 1,username1,username2
@@ -163,8 +160,7 @@ class CO(Game):
                                 winner_display = f"{username2} Wins!"
                                 text = font.render(winner_display, True, ((255,0,0)))
                                 screen.blit(text, (190, 500))
-                                self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-                                self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
+                                self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
                                 pygame.display.update()
                                 clock.tick(1)
                                 return 1,username2,username1
@@ -178,8 +174,7 @@ class CO(Game):
                                 winner_display = f"{username1} Wins!"
                                 text = font.render(winner_display, True, ((255,0,0)))
                                 screen.blit(text, (190, 500))
-                                self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-                                self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
+                                self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
                                 pygame.display.update()
                                 clock.tick(1)
                                 return 1,username1,username2
@@ -220,8 +215,7 @@ class CO(Game):
                         winner_text = "It's Draw"
                     text = font.render(winner_text, True, (255, 255, 255))
                     screen.blit(text, (190, 500))
-                    self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-                    self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
+                    self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
                     pygame.display.update()
                     clock.tick(1)
                     #to print the winner username on terminal
@@ -232,9 +226,7 @@ class CO(Game):
                     elif board_count == 49:
                         return 2,username1,username2
             #displaying the usernames of the players
-            font=pygame.font.Font(None,36)
-            self.render_user(710, 10, "Username Of", "Player Y:", username1, (0,0,0))
-            self.render_user(710, 101,"username of", "player R:", username2, (0,0,0))
+            self.render_user(710, 30, 130, 171, 280, username1, username2, (0,0,0), red, yellow, screen)
             #when the winner is declared the text to press e to exit is already printed but when the winner is not declared it is shown in the column containing usernames
             if winner == ' ':
                 screen.blit(quit,(750,550))
