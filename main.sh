@@ -35,10 +35,10 @@ while ((i<2)); do
             iter=0
             b=0
             echo "Username should contain atleast 4 charecters"
-        elif ((${#un} > 13)); then
+        elif ((${#un} > 12)); then
             iter=0
             b=0
-            echo "Username shall be of atmost 13 charecters"
+            echo "Username shall be of atmost 12 charecters"
         fi
         if (( iter==1 ));then 
             l=1

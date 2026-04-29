@@ -1,9 +1,9 @@
 all:
-	pdflatex Project_Report.tex
-	bibtex Project_Report
-	pdflatex Project_Report.tex
-	pdflatex Project_Report.tex
+	pdflatex report.tex
+	bibtex report
+	pdflatex report.tex
+	pdflatex report.tex
 clean:
-	rm -f Project_Report.aux Project_Report.log Project_Report.out Project_Report.bbl Project_Report.blg Project_Report.pdf
+	rm -f report.aux report.log report.out report.bbl report.blg
 open:
-	xdg-open Project_Report.pdf 
+	xdg-open report.pdf 
